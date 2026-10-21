@@ -1,0 +1,25 @@
+# Prevent CDPR content from entering the repo
+**/source/raw/
+**/mesh-work/source/
+
+# Ignore ModWright files
+#  Note:  ModWright is a tool that allows an LLM to see and modify state data while the game is running.
+#  It is used to assist in building, testing, research, and debugging only here.
+**/.modwright/*
+!**/.modwright/suppressions.json
+
+# Ignore Build files
+*.archive
+**/build/
+**/dist/
+**/packed/
+*.zip
+
+# Ignore tools
+*.blend1
+*.log
+db.sqlite3
+.vs/
+.vscode/
+Thumbs.db
+desktop.ini
