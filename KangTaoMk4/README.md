@@ -1,6 +1,6 @@
 The Kang Tao Mk4 is an Iconic Legendary cyberdeck.
 
-It acts as it's own smart link - freeing the hand slot.
+It acts as its own smart link - freeing the hand slot.
 
 It adds the 'Mechanical Assist' quickhack, always prepared, which will make drones and androids friendly.
 
