@@ -1,0 +1,41 @@
+UIIcon.KangTaoMk4Icon:
+    $type: UIIcon
+    atlasResourcePath: mod\kangtaomk4\icons.inkatlas
+    atlasPartName: cyberdeck_icon
+
+Items.KangTaoMk4:
+  $base: Items.AdvancedLegendaryVeryHighEnergyDeck
+  displayName: KangTaoMk4-Name
+  localizedDescription: KangTaoMk4-Desc
+  iconPath: KangTaoMk4Icon
+
+  tags:
+    - !append KangTaoMk4
+
+#From Netdriver
+  statModifiers:
+    - !append
+      $type: ConstantStatModifier
+      statType: BaseStats.IsItemIconic
+      modifierType: Additive
+      value: 1
+
+  OnEquip:
+    - !append
+      $type: GameplayLogicPackage
+      stats:
+        - $type: ConstantStatModifier
+          statType: BaseStats.Memory
+          modifierType: Additive
+          value: 16
+
+        - $type: ConstantStatModifier
+          statType: BaseStats.BufferSize
+          modifierType: Additive
+          value: 6
+
+#Acts as a smart link as well
+        - $type: ConstantStatModifier
+          statType: BaseStats.HasSmartLink
+          modifierType: Additive
+          value: 1
