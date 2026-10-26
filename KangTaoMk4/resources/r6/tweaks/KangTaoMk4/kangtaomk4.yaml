@@ -39,3 +39,7 @@ Items.KangTaoMk4:
           statType: BaseStats.HasSmartLink
           modifierType: Additive
           value: 1
+
+# Mechanical Assist
+  objectActions:
+    - !append QuickHack.KangTaoMechanicalAssist

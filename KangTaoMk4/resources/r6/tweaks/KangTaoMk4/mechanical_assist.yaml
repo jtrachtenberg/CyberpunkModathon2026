@@ -1,0 +1,100 @@
+# Friendly, but for 'droids
+QuickHack.KangTaoMechanicalAssist:
+  $base: QuickHack.CovertHack
+  actionName: KangTaoMechanicalAssist
+  objectActionUI: Interactions.KangTaoMechanicalAssist
+  hackCategory: HackCategory.DeviceHack
+  gameplayCategory: ActionCategories.OverrideAttitude
+  targetActivePrereqs:
+    - !append Prereqs.KangTaoNotFriendlyToV
+  costs:
+    - QuickHack.DeviceMemoryCost
+
+QuickHack.KangTaoMechanicalAssistDrone:
+  $base: QuickHack.KangTaoMechanicalAssist
+  priority: 1
+  costs:
+    - $base: QuickHack.DeviceMemoryCost
+      costMods:
+        - !append
+          $base: QuickHack.MemoryMod
+          value: 4
+  activationTime:
+    - !append
+      $type: ConstantStatModifier
+      statType: BaseStats.QuickHackUpload
+      modifierType: Additive
+      value: 4.0
+  completionEffects:
+    - !append
+      $type: ObjectActionEffect
+      statusEffect: BaseStatusEffect.KangTaoMechanicalAssistDrone
+      recipient: ObjectActionReference.Target
+
+QuickHack.KangTaoMechanicalAssistAndroid:
+  $base: QuickHack.KangTaoMechanicalAssist
+  priority: 1
+  costs:
+    - $base: QuickHack.DeviceMemoryCost
+      costMods:
+        - !append
+          $base: QuickHack.MemoryMod
+          value: 7
+  activationTime:
+    - !append
+      $type: ConstantStatModifier
+      statType: BaseStats.QuickHackUpload
+      modifierType: Additive
+      value: 4.1
+  completionEffects:
+    - !append
+      $type: ObjectActionEffect
+      statusEffect: BaseStatusEffect.KangTaoMechanicalAssistAndroid
+      recipient: ObjectActionReference.Target
+
+# from interactions.tweak
+Interactions.KangTaoMechanicalAssist:
+  $base: Interactions.OverrideAttitudeHack
+  name: KangTaoMechanicalAssist
+  caption: LocKey#6997 #friendly
+  description: LocKey#KangTaoMk4-MechAssist-Desc
+
+Prereqs.KangTaoNotFriendlyToV:
+  $type: ObjectActionPrereq
+  failureConditionPrereq:
+    - Takedown.IsTargetAttitudeAcceptable
+  failureExplanation: LocKey#7010  #Not a Threat
+
+Character.Drone_NPC_Base:
+  objectActions:
+    - !append QuickHack.KangTaoMechanicalAssistDrone
+
+Character.Android_NPC_Base:
+  objectActions:
+    - !append QuickHack.KangTaoMechanicalAssistAndroid
+
+#Duration
+BaseStatusEffect.KangTaoMechanicalAssistDrone:
+  $base: BaseStatusEffect.SetFriendly
+  duration: BaseStats.InfiniteDuration
+  packages:
+    - $type: GameplayLogicPackage
+      effectors:
+      - $type: Effector
+        prereqRecord: Prereqs.AlwaysTruePrereq
+        effectorClassName: KangTaoMk4.MechanicalAssistEffector
+
+BaseStatusEffect.KangTaoMechanicalAssistAndroid:
+  $base: BaseStatusEffect.SetFriendly
+  duration: 
+    $base: BaseStatusEffect.BaseQuickHackDuration
+    statModifiers:
+      - !append
+        $base: BaseStatusEffect.BaseDurationMod
+        value: 90.0
+  packages:
+    - $type: GameplayLogicPackage
+      effectors:
+      - $type: Effector
+        prereqRecord: Prereqs.AlwaysTruePrereq
+        effectorClassName: KangTaoMk4.MechanicalAssistEffector
