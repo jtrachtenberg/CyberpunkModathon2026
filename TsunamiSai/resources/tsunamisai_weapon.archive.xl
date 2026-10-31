@@ -1,0 +1,10 @@
+factories:
+  - mod\tsunamisai\factory.csv
+localization:
+  onscreens:
+    en-us: mod\tsunamisai\localization\en-us.json
+resource:
+  patch:
+    mod\tsunamisai\patch\player_wa_anim_ext.ent:
+      - ep1\characters\entities\player\player_wa_fpp_ep1.ent
+      - base\characters\entities\player\player_wa_fpp.ent

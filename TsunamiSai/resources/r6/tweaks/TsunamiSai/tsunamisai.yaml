@@ -1,0 +1,70 @@
+UIIcon.TsunamiSaiIcon:
+    $type: UIIcon
+    atlasResourcePath: mod\tsunamisai\icons.inkatlas
+    atlasPartName: sai_weapon_icon
+
+Items.tsunamisai_weapon_mod_ability:
+  $base: Items.IconicWeaponModAbilityBase
+  UIData:
+    iconPath: ability_offensive
+    localizedDescription: LocKey#tsunamisai_weapon_mod_desc
+
+Items.tsunamisai_weapon_mod:
+  $base: Items.IconicMeleeWeaponModBase
+  OnAttach: [Items.tsunamisai_weapon_mod_ability]
+  statModifiers:
+  - !append
+    $type: ConstantStatModifier
+    statType: BaseStats.BleedingApplicationRate
+    modifierType: Additive
+    value: 50.0
+
+KnifeAttacks.TsunamiSaiKnifeThrowAttackProjectile:
+  $base: KnifeAttacks.PunkKnifeThrowAttackProjectile
+  projectileTemplateName: tsunamisai_weapon_knife
+
+HUDWeaponIcon.tsunamisai_weapon:
+  $type: gamedataUIIcon_Record
+  atlasResourcePath: mod\tsunamisai\icons.inkatlas
+  atlasPartName: sai_weapon_hub_icon
+
+
+Items.tsunamisai_weapon:
+  $base: Items.Preset_Knife_Default
+  appearanceResourceName: tsunamisai_weapon_appfile
+  projectileTemplateName: tsunamisai_weapon_knife
+  useProjectileAppearance: true
+  attacks:
+    - !append KnifeAttacks.TsunamiSaiKnifeThrowAttackProjectile
+  visualTags:
+    - TsunamiSai
+  slotPartListPreset:
+  - !append
+    slot: AttachmentSlots.IconicMeleeWeaponMod1
+    itemPartPreset: Items.tsunamisai_weapon_mod
+  displayName: TsunamiSai-Name
+  gameplayDescription: TsunamiSai-Desc
+  iconPath: TsunamiSaiIcon
+  hudIcon: HUDWeaponIcon.tsunamisai_weapon
+  blueprint: Items.Iconic_Melee_Blueprint
+  quality: Quality.Random
+  tags:
+    - !append IconicWeapon
+  statModifiers:
+    - !append Quality.IconicItem
+  statModifierGroups:
+    - !append Items.IconicQualityRandomization
+  OnAttach:
+    - !append
+      $type: GameplayLogicPackage
+      animationWrapperOverrides: [w_tsunamisai]
+  # Dual Wield
+  #objectActions:
+  #  - !append PlayerPuppet.TsunamiSaiDual
+
+Items.tsunamisai_weapon_left:
+  $base: Items.tsunamisai_weapon
+  stateMachineName: ""
+
+Items.tsunamisai_weapon.scaleToPlayer: true  
+Items.tsunamisai_weapon_left.scaleToPlayer: true

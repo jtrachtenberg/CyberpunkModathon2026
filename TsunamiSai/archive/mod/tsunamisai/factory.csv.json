@@ -1,0 +1,41 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "mod\\tsunamisai\\factory.csv"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "EmbeddedFiles": [],
+    "RootChunk": {
+      "$type": "C2dArray",
+      "cookingPlatform": "PLATFORM_PC",
+      "compiledHeaders": [
+        "name",
+        "path",
+        "preload"
+      ],
+      "headers": [
+        "name",
+        "path",
+        "preload"
+      ],
+      "compiledData": [
+        [
+          "tsunamisai_weapon_appfile",
+          "mod\\tsunamisai\\tsunamisai.app",
+          "true"
+        ],
+        [
+          "tsunamisai_weapon_knife",
+          "mod\\tsunamisai\\projectile\\tsunamisai_projectile.ent",
+          "true"
+        ]
+      ],
+      "data": []
+    }
+  }
+}

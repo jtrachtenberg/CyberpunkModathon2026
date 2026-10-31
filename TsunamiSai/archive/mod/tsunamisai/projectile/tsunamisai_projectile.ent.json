@@ -1,0 +1,1417 @@
+{
+ "Header": {
+  "WolvenKitVersion": "8.20.0",
+  "WKitJsonVersion": "0.0.9",
+  "GameVersion": 2310,
+  "ExportedDateTime": "2026-10-30T18:38:12.3909937Z",
+  "DataType": "CR2W",
+  "ArchiveFileName": "mod\\tsunamisai\\projectile\\tsunamisai_projectile.ent"
+ },
+ "Data": {
+  "Version": 195,
+  "BuildVersion": 0,
+  "RootChunk": {
+   "$type": "entEntityTemplate",
+   "appearances": [
+    {
+     "$type": "entTemplateAppearance",
+     "appearanceName": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "default"
+     },
+     "appearanceResource": {
+      "DepotPath": {
+       "$type": "ResourcePath",
+       "$storage": "string",
+       "$value": "mod\\tsunamisai\\projectile\\tsunamisai_projectile.app"
+      },
+      "Flags": "Soft"
+     },
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "_default"
+     }
+    }
+   ],
+   "backendDataOverrides": [],
+   "bindingOverrides": [],
+   "compiledData": {
+    "BufferId": "0",
+    "Flags": 7471104,
+    "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+    "Data": {
+     "Version": 4,
+     "Sections": 7,
+     "CruidIndex": 0,
+     "CruidDict": {
+      "0": "0",
+      "1": "1630209569982656512",
+      "2": "1630209569999433728",
+      "3": "1630209570016210944",
+      "4": "1630209570032988160",
+      "5": "1630209570083319812",
+      "6": "2806054014057209856",
+      "7": "2999543470668292096",
+      "8": "3041745936872738816"
+     },
+     "Chunks": [
+      {
+       "$type": "MeleeProjectile",
+       "accumulatedTimePasssed": 0,
+       "audioResourceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "None"
+       },
+       "collided": 0,
+       "customCameraTarget": "ECCTV_All",
+       "deactivationDepth": -99999,
+       "displayDescription": {
+        "unk1": "0",
+        "value": ""
+       },
+       "displayName": {
+        "unk1": "0",
+        "value": ""
+       },
+       "e3ObjectRevealed": 0,
+       "forceDefeatReward": 0,
+       "forceRegisterInHudManager": 1,
+       "gravitySimulationMult": 0,
+       "hasHitWater": 0,
+       "hasVisibilityForcedInAnimSystem": 0,
+       "hitInstigatorCooldownID": {
+        "$type": "gameDelayID"
+       },
+       "initialLaunchVelocity": 0,
+       "isActive": 1,
+       "isBroken": 0,
+       "isCollidedWithEnemy": 0,
+       "isDead": 0,
+       "isHighlightedInFocusMode": 0,
+       "isIconic": 0,
+       "isScannerDataDirty": 0,
+       "isTargetedWithSmartWeapon": 0,
+       "killRewardDisabled": 0,
+       "lastEngineTime": 0,
+       "lastHitInstigatorID": {
+        "$type": "entEntityID",
+        "hash": "0"
+       },
+       "lifeTime": 0,
+       "lootQuality": "Common",
+       "markAsQuest": 0,
+       "persistentState": null,
+       "playerSocket": {
+        "$type": "gamePlayerSocket"
+       },
+       "prereqListeners": [],
+       "projectile": null,
+       "projectileCollisionEvaluator": null,
+       "projectileComponent": null,
+       "projectilePosition": {
+        "$type": "Vector4",
+        "W": 0,
+        "X": 0,
+        "Y": 0,
+        "Z": 0
+       },
+       "projectileSpawnPoint": {
+        "$type": "Vector4",
+        "W": 0,
+        "X": 0,
+        "Y": 0,
+        "Z": 0
+       },
+       "projectileStopped": 0,
+       "receivedDamageHistory": [],
+       "renderSceneLayerMask": "Default",
+       "resourceLibraryComponent": null,
+       "scanningComponent": null,
+       "sourceShootComponent": null,
+       "squadMemberComponent": null,
+       "statusEffectComponent": null,
+       "statusEffectListeners": [],
+       "stimBroadcaster": null,
+       "tags": {
+        "$type": "redTagList",
+        "tags": []
+       },
+       "targetShootComponent": null,
+       "throwCooldownSE": {
+        "$type": "TweakDBID",
+        "$storage": "uint64",
+        "$value": "0"
+       },
+       "throwingMeleeResourcePoolListener": null,
+       "tweakDBPath": "knife_params",
+       "uiSlotComponent": null,
+       "updateBucket": "AttachedObject",
+       "user": null,
+       "visibilityCheckDistance": 16000,
+       "visionComponent": null,
+       "wasPicked": 0,
+       "waterHeight": 0,
+       "waterImpulseRadius": 0,
+       "waterImpulseStrength": 0,
+       "weapon": null,
+       "willDieSoon": 0,
+       "workspotMapper": null
+      },
+      {
+       "$type": "gameprojectileComponent",
+       "bouncePreviewEffect": {
+        "DepotPath": {
+         "$type": "ResourcePath",
+         "$storage": "uint64",
+         "$value": "0"
+        },
+        "Flags": "Soft"
+       },
+       "collisionsFilterClosest": 0,
+       "derivedVelocityParams": {
+        "$type": "gameprojectileVelocityParams",
+        "xFactor": 1,
+        "yFactor": 1,
+        "zFactor": 1
+       },
+       "deriveOwnerVelocity": 0,
+       "explosionPreviewEffect": {
+        "DepotPath": {
+         "$type": "ResourcePath",
+         "$storage": "uint64",
+         "$value": "0"
+        },
+        "Flags": "Soft"
+       },
+       "explosionPreviewTime": 0,
+       "filterData": {
+        "HandleId": "0",
+        "Data": {
+         "$type": "physicsFilterData",
+         "customFilterData": null,
+         "preset": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "No Collision"
+         },
+         "queryFilter": {
+          "$type": "physicsQueryFilter",
+          "mask1": "0",
+          "mask2": "0"
+         },
+         "simulationFilter": {
+          "$type": "physicsSimulationFilter",
+          "mask1": "0",
+          "mask2": "0"
+         }
+        }
+       },
+       "gameEffectRef": {
+        "$type": "gameEffectRef",
+        "set": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\gameplay\\game_effects\\bullet_effect.es"
+         },
+         "Flags": "Obligatory"
+        },
+        "tag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "bullet"
+        }
+       },
+       "id": "1630209569982656512",
+       "isReplicable": 0,
+       "localTransform": {
+        "$type": "WorldTransform",
+        "Orientation": {
+         "$type": "Quaternion",
+         "i": 0,
+         "j": 0,
+         "k": 0,
+         "r": 1
+        },
+        "Position": {
+         "$type": "WorldPosition",
+         "x": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "y": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "z": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         }
+        }
+       },
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "projectileComponent"
+       },
+       "onCollisionAction": "StopAndStick",
+       "parentTransform": {
+        "HandleId": "1",
+        "Data": {
+         "$type": "entHardTransformBinding",
+         "bindName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "Component"
+         },
+         "enabled": 1,
+         "enableMask": {
+          "$type": "entTagMask",
+          "excludedTags": {
+           "$type": "redTagList",
+           "tags": [
+            {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "NoBinding"
+            }
+           ]
+          },
+          "hardTags": {
+           "$type": "redTagList",
+           "tags": []
+          },
+          "softTags": {
+           "$type": "redTagList",
+           "tags": []
+          }
+         },
+         "slotName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         }
+        }
+       },
+       "previewEffect": {
+        "DepotPath": {
+         "$type": "ResourcePath",
+         "$storage": "uint64",
+         "$value": "0"
+        },
+        "Flags": "Soft"
+       },
+       "queryPreset": {
+        "$type": "physicsQueryPreset",
+        "presetName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "Bullet logic"
+        }
+       },
+       "rotationOffset": {
+        "$type": "Quaternion",
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "r": 1
+       },
+       "sweepCollisionRadius": 0,
+       "useSweepCollision": 0
+      },
+      {
+       "$type": "entSlotComponent",
+       "fallbackSlots": [],
+       "id": "1630209569999433728",
+       "isReplicable": 0,
+       "localTransform": {
+        "$type": "WorldTransform",
+        "Orientation": {
+         "$type": "Quaternion",
+         "i": 0,
+         "j": 0,
+         "k": 0,
+         "r": 1
+        },
+        "Position": {
+         "$type": "WorldPosition",
+         "x": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "y": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "z": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         }
+        }
+       },
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "Component"
+       },
+       "parentTransform": {
+        "HandleId": "2",
+        "Data": {
+         "$type": "entHardTransformBinding",
+         "bindName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "Component0"
+         },
+         "enabled": 1,
+         "enableMask": {
+          "$type": "entTagMask",
+          "excludedTags": {
+           "$type": "redTagList",
+           "tags": [
+            {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "NoBinding"
+            }
+           ]
+          },
+          "hardTags": {
+           "$type": "redTagList",
+           "tags": []
+          },
+          "softTags": {
+           "$type": "redTagList",
+           "tags": []
+          }
+         },
+         "slotName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         }
+        }
+       },
+       "slots": [
+        {
+         "$type": "entSlot",
+         "boneName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         },
+         "relativePosition": {
+          "$type": "Vector3",
+          "X": 0,
+          "Y": 0,
+          "Z": 0
+         },
+         "relativeRotation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "slotName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "bullet"
+         }
+        }
+       ]
+      },
+      {
+       "$type": "gameaudioSoundComponent",
+       "applyAcousticOcclusion": 0,
+       "applyAcousticRepositioning": 0,
+       "applyObstruction": 0,
+       "audioName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "None"
+       },
+       "id": "1630209570016210944",
+       "isReplicable": 0,
+       "localTransform": {
+        "$type": "WorldTransform",
+        "Orientation": {
+         "$type": "Quaternion",
+         "i": 0,
+         "j": 0,
+         "k": 0,
+         "r": 1
+        },
+        "Position": {
+         "$type": "WorldPosition",
+         "x": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "y": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "z": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         }
+        }
+       },
+       "maxPlayDistance": 40,
+       "minVocalizationRepeatTime": 0,
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "Component0"
+       },
+       "obstructionChangeTime": 0.200000003,
+       "parentTransform": null,
+       "streamingDistance": 0,
+       "subSystems": [],
+       "voEventOverride": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "None"
+       }
+      },
+      {
+       "$type": "entEffectSpawnerComponent",
+       "autoHideDistance": 50,
+       "effectDescs": [
+        {
+         "HandleId": "3",
+         "Data": {
+          "$type": "entEffectDesc",
+          "autoSpawnTag": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "_autospawn"
+          },
+          "compiledEffectInfo": {
+           "$type": "worldCompiledEffectInfo",
+           "componentNames": [],
+           "eventsSortedByRUID": [
+            {
+             "$type": "worldCompiledEffectEventInfo",
+             "componentIndexMask": "0",
+             "eventRUID": "867539839957426176",
+             "flags": 0,
+             "placementIndexMask": "1"
+            },
+            {
+             "$type": "worldCompiledEffectEventInfo",
+             "componentIndexMask": "0",
+             "eventRUID": "867805470766227456",
+             "flags": 1,
+             "placementIndexMask": "1"
+            }
+           ],
+           "placementInfos": [
+            {
+             "$type": "worldCompiledEffectPlacementInfo",
+             "flags": 5,
+             "placementTagIndex": 0,
+             "relativePositionIndex": 0,
+             "relativeRotationIndex": 0
+            }
+           ],
+           "placementTags": [
+            {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "bullet"
+            }
+           ],
+           "relativePositions": [
+            {
+             "$type": "Vector3",
+             "X": 0,
+             "Y": 0,
+             "Z": 0
+            }
+           ],
+           "relativeRotations": [
+            {
+             "$type": "Quaternion",
+             "i": 0,
+             "j": 0,
+             "k": 0,
+             "r": 1
+            }
+           ]
+          },
+          "effect": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\fx\\weapons\\smart\\rifles\\corporate\\s_rifle_corp_01_lvl1_bullet_trail_sand.effect"
+           },
+           "Flags": "Default"
+          },
+          "effectName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "trail_sand"
+          },
+          "id": "1630209280223358980",
+          "isAutoSpawn": 0,
+          "randomWeight": 1
+         }
+        },
+        {
+         "HandleId": "4",
+         "Data": {
+          "$type": "entEffectDesc",
+          "autoSpawnTag": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "_autospawn"
+          },
+          "compiledEffectInfo": {
+           "$type": "worldCompiledEffectInfo",
+           "componentNames": [],
+           "eventsSortedByRUID": [
+            {
+             "$type": "worldCompiledEffectEventInfo",
+             "componentIndexMask": "0",
+             "eventRUID": "867539839957426176",
+             "flags": 0,
+             "placementIndexMask": "1"
+            }
+           ],
+           "placementInfos": [
+            {
+             "$type": "worldCompiledEffectPlacementInfo",
+             "flags": 5,
+             "placementTagIndex": 0,
+             "relativePositionIndex": 0,
+             "relativeRotationIndex": 0
+            }
+           ],
+           "placementTags": [
+            {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "bullet"
+            }
+           ],
+           "relativePositions": [
+            {
+             "$type": "Vector3",
+             "X": 0,
+             "Y": 0,
+             "Z": 0
+            }
+           ],
+           "relativeRotations": [
+            {
+             "$type": "Quaternion",
+             "i": 0,
+             "j": 0,
+             "k": 0,
+             "r": 0
+            }
+           ]
+          },
+          "effect": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\fx\\weapons\\smart\\rifles\\corporate\\s_rifle_corp_01_lvl1_bullet_trail.effect"
+           },
+           "Flags": "Default"
+          },
+          "effectName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "trail"
+          },
+          "id": "1630209280223358976",
+          "isAutoSpawn": 0,
+          "randomWeight": 1
+         }
+        }
+       ],
+       "forceLODLevel": -1,
+       "id": "1630209570032988160",
+       "isReplicable": 0,
+       "localTransform": {
+        "$type": "WorldTransform",
+        "Orientation": {
+         "$type": "Quaternion",
+         "i": 0,
+         "j": 0,
+         "k": 0,
+         "r": 1
+        },
+        "Position": {
+         "$type": "WorldPosition",
+         "x": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "y": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "z": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         }
+        }
+       },
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "Component2"
+       },
+       "parentTransform": {
+        "HandleId": "5",
+        "Data": {
+         "$type": "entHardTransformBinding",
+         "bindName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "Component"
+         },
+         "enabled": 1,
+         "enableMask": {
+          "$type": "entTagMask",
+          "excludedTags": {
+           "$type": "redTagList",
+           "tags": [
+            {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "NoBinding"
+            }
+           ]
+          },
+          "hardTags": {
+           "$type": "redTagList",
+           "tags": []
+          },
+          "softTags": {
+           "$type": "redTagList",
+           "tags": []
+          }
+         },
+         "slotName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         }
+        }
+       },
+       "renderSceneLayerMask": "Default"
+      },
+      {
+       "$type": "StimBroadcasterComponent",
+       "activeRequests": [],
+       "blockedStims": [],
+       "currentID": 0,
+       "fallbackInterval": 1,
+       "id": "1630209570083319812",
+       "isReplicable": 0,
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "StimBroadcaster"
+       },
+       "persistentState": null,
+       "priority": 0,
+       "shouldBroadcast": 0,
+       "targets": []
+      },
+      {
+       "$type": "gameinteractionsComponent",
+       "definitionResource": {
+        "DepotPath": {
+         "$type": "ResourcePath",
+         "$storage": "string",
+         "$value": "base\\gameplay\\items\\interactions\\throwing_weapon_pickup.interaction"
+        },
+        "Flags": "Obligatory"
+       },
+       "id": "2806054014057209856",
+       "interactionRootOffset": {
+        "$type": "Vector3",
+        "X": 0,
+        "Y": 0,
+        "Z": 0
+       },
+       "isEnabled": 0,
+       "isReplicable": 0,
+       "layerOverrides": [],
+       "layerOverridesTemp": [],
+       "localTransform": {
+        "$type": "WorldTransform",
+        "Orientation": {
+         "$type": "Quaternion",
+         "i": 0,
+         "j": 0,
+         "k": 0,
+         "r": 1
+        },
+        "Position": {
+         "$type": "WorldPosition",
+         "x": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "y": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         },
+         "z": {
+          "$type": "FixedPoint",
+          "Bits": 0
+         }
+        }
+       },
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "interactions3311"
+       },
+       "parentTransform": {
+        "HandleId": "6",
+        "Data": {
+         "$type": "entHardTransformBinding",
+         "bindName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "Component"
+         },
+         "enabled": 1,
+         "enableMask": {
+          "$type": "entTagMask",
+          "excludedTags": {
+           "$type": "redTagList",
+           "tags": [
+            {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "NoBinding"
+            }
+           ]
+          },
+          "hardTags": {
+           "$type": "redTagList",
+           "tags": []
+          },
+          "softTags": {
+           "$type": "redTagList",
+           "tags": []
+          }
+         },
+         "slotName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         }
+        }
+       }
+      },
+      {
+       "$type": "ResourceLibraryComponent",
+       "id": "2999543470668292096",
+       "isReplicable": 0,
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "ResourceLibrary"
+       },
+       "persistentState": null,
+       "priority": 0,
+       "resources": [
+        {
+         "$type": "FxResourceMapData",
+         "key": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "splash_effect"
+         },
+         "resource": {
+          "$type": "gameFxResource",
+          "effect": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\fx\\weapons\\impacts\\water\\melee\\imp_water_refl_blade.effect"
+           },
+           "Flags": "Default"
+          }
+         }
+        }
+       ]
+      },
+      {
+       "$type": "gameVisionModeComponent",
+       "activeForcedHighlight": null,
+       "activeRevealRequests": [],
+       "currentDefaultHighlight": null,
+       "defaultHighlightData": null,
+       "forcedHighlights": [],
+       "id": "3041745936872738816",
+       "isFocusModeActive": 0,
+       "isReplicable": 0,
+       "name": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "vision"
+       },
+       "persistentState": {
+        "HandleId": "7",
+        "Data": {
+         "$type": "gameVisionModeComponentPS",
+         "hideInDefaultMode": 0,
+         "hideInFocusMode": 0,
+         "inactive": 0,
+         "questForcedMeshes": null,
+         "questForcedModules": null,
+         "questInactive": 0,
+         "storedHighlightData": null
+        }
+       },
+       "slaveObjectsToHighlight": [],
+       "wasCleanedUp": 0
+      }
+     ]
+    }
+   },
+   "compiledEntityLODFlags": 0,
+   "componentResolveSettings": [],
+   "components": [
+    {
+     "$type": "gameprojectileComponent",
+     "bouncePreviewEffect": {
+      "DepotPath": {
+       "$type": "ResourcePath",
+       "$storage": "uint64",
+       "$value": "0"
+      },
+      "Flags": "Soft"
+     },
+     "collisionsFilterClosest": 0,
+     "derivedVelocityParams": {
+      "$type": "gameprojectileVelocityParams",
+      "xFactor": 1,
+      "yFactor": 1,
+      "zFactor": 1
+     },
+     "deriveOwnerVelocity": 0,
+     "explosionPreviewEffect": {
+      "DepotPath": {
+       "$type": "ResourcePath",
+       "$storage": "uint64",
+       "$value": "0"
+      },
+      "Flags": "Soft"
+     },
+     "explosionPreviewTime": 0,
+     "filterData": {
+      "HandleRefId": "0"
+     },
+     "gameEffectRef": {
+      "$type": "gameEffectRef",
+      "set": {
+       "DepotPath": {
+        "$type": "ResourcePath",
+        "$storage": "string",
+        "$value": "base\\gameplay\\game_effects\\bullet_effect.es"
+       },
+       "Flags": "Obligatory"
+      },
+      "tag": {
+       "$type": "CName",
+       "$storage": "string",
+       "$value": "bullet"
+      }
+     },
+     "id": "1630209569982656512",
+     "isReplicable": 0,
+     "localTransform": {
+      "$type": "WorldTransform",
+      "Orientation": {
+       "$type": "Quaternion",
+       "i": 0,
+       "j": 0,
+       "k": 0,
+       "r": 1
+      },
+      "Position": {
+       "$type": "WorldPosition",
+       "x": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "y": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "z": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       }
+      }
+     },
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "projectileComponent"
+     },
+     "onCollisionAction": "StopAndStick",
+     "parentTransform": {
+      "HandleRefId": "1"
+     },
+     "previewEffect": {
+      "DepotPath": {
+       "$type": "ResourcePath",
+       "$storage": "uint64",
+       "$value": "0"
+      },
+      "Flags": "Soft"
+     },
+     "queryPreset": {
+      "$type": "physicsQueryPreset",
+      "presetName": {
+       "$type": "CName",
+       "$storage": "string",
+       "$value": "Bullet logic"
+      }
+     },
+     "rotationOffset": {
+      "$type": "Quaternion",
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "r": 1
+     },
+     "sweepCollisionRadius": 0,
+     "useSweepCollision": 0
+    },
+    {
+     "$type": "entSlotComponent",
+     "fallbackSlots": [],
+     "id": "1630209569999433728",
+     "isReplicable": 0,
+     "localTransform": {
+      "$type": "WorldTransform",
+      "Orientation": {
+       "$type": "Quaternion",
+       "i": 0,
+       "j": 0,
+       "k": 0,
+       "r": 1
+      },
+      "Position": {
+       "$type": "WorldPosition",
+       "x": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "y": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "z": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       }
+      }
+     },
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "Component"
+     },
+     "parentTransform": {
+      "HandleRefId": "2"
+     },
+     "slots": [
+      {
+       "$type": "entSlot",
+       "boneName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "None"
+       },
+       "relativePosition": {
+        "$type": "Vector3",
+        "X": 0,
+        "Y": 0,
+        "Z": 0
+       },
+       "relativeRotation": {
+        "$type": "Quaternion",
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "r": 1
+       },
+       "slotName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "bullet"
+       }
+      }
+     ]
+    },
+    {
+     "$type": "gameaudioSoundComponent",
+     "applyAcousticOcclusion": 0,
+     "applyAcousticRepositioning": 0,
+     "applyObstruction": 0,
+     "audioName": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "None"
+     },
+     "id": "1630209570016210944",
+     "isReplicable": 0,
+     "localTransform": {
+      "$type": "WorldTransform",
+      "Orientation": {
+       "$type": "Quaternion",
+       "i": 0,
+       "j": 0,
+       "k": 0,
+       "r": 1
+      },
+      "Position": {
+       "$type": "WorldPosition",
+       "x": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "y": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "z": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       }
+      }
+     },
+     "maxPlayDistance": 40,
+     "minVocalizationRepeatTime": 0,
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "Component0"
+     },
+     "obstructionChangeTime": 0.200000003,
+     "parentTransform": null,
+     "streamingDistance": 0,
+     "subSystems": [],
+     "voEventOverride": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "None"
+     }
+    },
+    {
+     "$type": "entEffectSpawnerComponent",
+     "autoHideDistance": 50,
+     "effectDescs": [
+      {
+       "HandleRefId": "3"
+      },
+      {
+       "HandleRefId": "4"
+      }
+     ],
+     "forceLODLevel": -1,
+     "id": "1630209570032988160",
+     "isReplicable": 0,
+     "localTransform": {
+      "$type": "WorldTransform",
+      "Orientation": {
+       "$type": "Quaternion",
+       "i": 0,
+       "j": 0,
+       "k": 0,
+       "r": 1
+      },
+      "Position": {
+       "$type": "WorldPosition",
+       "x": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "y": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "z": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       }
+      }
+     },
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "Component2"
+     },
+     "parentTransform": {
+      "HandleRefId": "5"
+     },
+     "renderSceneLayerMask": "Default"
+    },
+    {
+     "$type": "StimBroadcasterComponent",
+     "activeRequests": [],
+     "blockedStims": [],
+     "currentID": 0,
+     "fallbackInterval": 1,
+     "id": "1630209570083319812",
+     "isReplicable": 0,
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "StimBroadcaster"
+     },
+     "persistentState": null,
+     "priority": 0,
+     "shouldBroadcast": 0,
+     "targets": []
+    },
+    {
+     "$type": "gameinteractionsComponent",
+     "definitionResource": {
+      "DepotPath": {
+       "$type": "ResourcePath",
+       "$storage": "string",
+       "$value": "base\\gameplay\\items\\interactions\\throwing_weapon_pickup.interaction"
+      },
+      "Flags": "Obligatory"
+     },
+     "id": "2806054014057209856",
+     "interactionRootOffset": {
+      "$type": "Vector3",
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+     },
+     "isEnabled": 0,
+     "isReplicable": 0,
+     "layerOverrides": [],
+     "layerOverridesTemp": [],
+     "localTransform": {
+      "$type": "WorldTransform",
+      "Orientation": {
+       "$type": "Quaternion",
+       "i": 0,
+       "j": 0,
+       "k": 0,
+       "r": 1
+      },
+      "Position": {
+       "$type": "WorldPosition",
+       "x": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "y": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       },
+       "z": {
+        "$type": "FixedPoint",
+        "Bits": 0
+       }
+      }
+     },
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "interactions3311"
+     },
+     "parentTransform": {
+      "HandleRefId": "6"
+     }
+    },
+    {
+     "$type": "ResourceLibraryComponent",
+     "id": "2999543470668292096",
+     "isReplicable": 0,
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "ResourceLibrary"
+     },
+     "persistentState": null,
+     "priority": 0,
+     "resources": [
+      {
+       "$type": "FxResourceMapData",
+       "key": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "splash_effect"
+       },
+       "resource": {
+        "$type": "gameFxResource",
+        "effect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\weapons\\impacts\\water\\melee\\imp_water_refl_blade.effect"
+         },
+         "Flags": "Default"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "$type": "gameVisionModeComponent",
+     "activeForcedHighlight": null,
+     "activeRevealRequests": [],
+     "currentDefaultHighlight": null,
+     "defaultHighlightData": null,
+     "forcedHighlights": [],
+     "id": "3041745936872738816",
+     "isFocusModeActive": 0,
+     "isReplicable": 0,
+     "name": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "vision"
+     },
+     "persistentState": {
+      "HandleRefId": "7"
+     },
+     "slaveObjectsToHighlight": [],
+     "wasCleanedUp": 0
+    }
+   ],
+   "cookingPlatform": "PLATFORM_PC",
+   "defaultAppearance": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "_default"
+   },
+   "entity": {
+    "HandleId": "8",
+    "Data": {
+     "$type": "MeleeProjectile",
+     "accumulatedTimePasssed": 0,
+     "audioResourceName": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "None"
+     },
+     "collided": 0,
+     "customCameraTarget": "ECCTV_All",
+     "deactivationDepth": -99999,
+     "displayDescription": {
+      "unk1": "0",
+      "value": ""
+     },
+     "displayName": {
+      "unk1": "0",
+      "value": ""
+     },
+     "e3ObjectRevealed": 0,
+     "forceDefeatReward": 0,
+     "forceRegisterInHudManager": 1,
+     "gravitySimulationMult": 0,
+     "hasHitWater": 0,
+     "hasVisibilityForcedInAnimSystem": 0,
+     "hitInstigatorCooldownID": {
+      "$type": "gameDelayID"
+     },
+     "initialLaunchVelocity": 0,
+     "isActive": 1,
+     "isBroken": 0,
+     "isCollidedWithEnemy": 0,
+     "isDead": 0,
+     "isHighlightedInFocusMode": 0,
+     "isIconic": 0,
+     "isScannerDataDirty": 0,
+     "isTargetedWithSmartWeapon": 0,
+     "killRewardDisabled": 0,
+     "lastEngineTime": 0,
+     "lastHitInstigatorID": {
+      "$type": "entEntityID",
+      "hash": "0"
+     },
+     "lifeTime": 0,
+     "lootQuality": "Common",
+     "markAsQuest": 0,
+     "persistentState": null,
+     "playerSocket": {
+      "$type": "gamePlayerSocket"
+     },
+     "prereqListeners": [],
+     "projectile": null,
+     "projectileCollisionEvaluator": null,
+     "projectileComponent": null,
+     "projectilePosition": {
+      "$type": "Vector4",
+      "W": 0,
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+     },
+     "projectileSpawnPoint": {
+      "$type": "Vector4",
+      "W": 0,
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+     },
+     "projectileStopped": 0,
+     "receivedDamageHistory": [],
+     "renderSceneLayerMask": "Default",
+     "resourceLibraryComponent": null,
+     "scanningComponent": null,
+     "sourceShootComponent": null,
+     "squadMemberComponent": null,
+     "statusEffectComponent": null,
+     "statusEffectListeners": [],
+     "stimBroadcaster": null,
+     "tags": {
+      "$type": "redTagList",
+      "tags": []
+     },
+     "targetShootComponent": null,
+     "throwCooldownSE": {
+      "$type": "TweakDBID",
+      "$storage": "uint64",
+      "$value": "0"
+     },
+     "throwingMeleeResourcePoolListener": null,
+     "tweakDBPath": "knife_params",
+     "uiSlotComponent": null,
+     "updateBucket": "AttachedObject",
+     "user": null,
+     "visibilityCheckDistance": 16000,
+     "visionComponent": null,
+     "wasPicked": 0,
+     "waterHeight": 0,
+     "waterImpulseRadius": 0,
+     "waterImpulseStrength": 0,
+     "weapon": null,
+     "willDieSoon": 0,
+     "workspotMapper": null
+    }
+   },
+   "includeInstanceBuffer": null,
+   "includes": [],
+   "inplaceResources": [],
+   "localData": null,
+   "resolvedDependencies": [],
+   "visualTagsSchema": null
+  },
+  "EmbeddedFiles": []
+ }
+}
