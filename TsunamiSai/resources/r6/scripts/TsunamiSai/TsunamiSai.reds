@@ -22,26 +22,39 @@ private func TsunamiSai_GetFreeSaiID(player: ref<PlayerPuppet>, rightHandItemId:
     return ItemID.None();
 }
 
+//reuse to allow a vanilla path to reequip the left hand after gadget when a Sai in drawn
+private func TsunamiSai_FindLeftSai(player: ref<PlayerPuppet>) -> ItemID {
+  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
+  let weaponLeftRecord: TweakDBID = t"Items.tsunamisai_weapon_left";
+  let leftHandItem: ItemID = ItemID.None();
+  let inv: array<wref<gameItemData>>;
+  transactionSystem.GetItemList(player, inv);
+  for item in inv {
+      if ItemID.GetTDBID(item.GetID()) == weaponLeftRecord {
+          leftHandItem = item.GetID();
+      }
+  }
+
+  return leftHandItem;
+}
+
+private func TsunamiSai_AddLeftSai(player: ref<PlayerPuppet>) -> Void {
+  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
+  let leftHandItem: ItemID = TsunamiSai_FindLeftSai(player);
+
+  //first draw
+  if !ItemID.IsValid(leftHandItem) {
+      leftHandItem = ItemID.FromTDBID(t"Items.tsunamisai_weapon_left");
+      transactionSystem.GiveItem(player, leftHandItem, 1);
+  }
+  transactionSystem.AddItemToSlot(player, t"AttachmentSlots.WeaponLeft", leftHandItem);
+}
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
     let isItemAddedToSlot = wrappedMethod(evt);
     if TsunamiSai_IsTsunamiSai(evt.GetItemID()) && evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
-        let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
-        let leftHandRecord: TweakDBID = t"Items.tsunamisai_weapon_left";
-        let leftHand: ItemID = ItemID.None();
-        let inv: array<wref<gameItemData>>;
-        transactionSystem.GetItemList(this, inv);
-        for item in inv {
-            if ItemID.GetTDBID(item.GetID()) == leftHandRecord {
-                leftHand = item.GetID();
-            }
-        }
-        if !ItemID.IsValid(leftHand) {
-            leftHand = ItemID.FromTDBID(leftHandRecord);
-            transactionSystem.GiveItem(this, leftHand, 1);
-        }
-
-        transactionSystem.AddItemToSlot(this, t"AttachmentSlots.WeaponLeft", leftHand);
+      TsunamiSai_AddLeftSai(this);
     }
     return isItemAddedToSlot;
 }
@@ -57,7 +70,27 @@ protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
             transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.WeaponLeft", true);
         }
     }
+
     return isItemRemovedFromSlot;
+}
+
+//return the left sai if equipped in the right hand after a gadget
+@wrapMethod(EquipmentSystemPlayerData)
+public func GetItemIDfromEquipmentManipulationAction(eqManipulationAction: EquipmentManipulationAction, currentState: SSlotActiveItems) -> SSlotActiveItems {
+  let state: SSlotActiveItems = wrappedMethod(eqManipulationAction, currentState);
+  if this.IsEquipmentManipulationAnUnequipRequest(eqManipulationAction)
+      && Equals(this.GetRequestSlotFromEquipmentManipulationAction(eqManipulationAction), EquipmentManipulationRequestSlot.Left)
+      && !ItemID.IsValid(state.leftHandItem)
+      && TsunamiSai_IsTsunamiSai(state.rightHandItem) {
+    let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+    if IsDefined(player) {
+      let leftSai: ItemID = TsunamiSai_FindLeftSai(player);
+      if ItemID.IsValid(leftSai) {
+        state.leftHandItem = leftSai;
+      }
+    }
+  }
+  return state;
 }
 
 @wrapMethod(DamageManager)
