@@ -4,6 +4,11 @@ private func TsunamiSai_IsTsunamiSai(id: ItemID) -> Bool {
     return ItemID.GetTDBID(id) == t"Items.tsunamisai_weapon";
 }
 
+private func TsunamiSai_HasLeftSai(player: ref<PlayerPuppet>) -> Bool {
+  let left = GameInstance.GetTransactionSystem(player.GetGame()).GetItemInSlot(player, t"AttachmentSlots.WeaponLeft");
+  return IsDefined(left) && ItemID.GetTDBID(left.GetItemID()) == t"Items.tsunamisai_weapon_left";
+}
+
 private func TsunamiSai_GetFreeSaiID(player: ref<PlayerPuppet>, rightHandItemId: ItemID) -> ItemID {
     let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
     let equipment: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
@@ -53,4 +58,52 @@ protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
         }
     }
     return isItemRemovedFromSlot;
+}
+
+@wrapMethod(DamageManager)
+private final static func ProcessDefensiveState(hitEvent: ref<gameHitEvent>) -> Void {
+  let player = hitEvent.target as PlayerPuppet;
+
+  if !IsDefined(player) || !AttackData.IsMelee(hitEvent.attackData.GetAttackType()) || !TsunamiSai_HasLeftSai(player) {
+    wrappedMethod(hitEvent);
+    return;
+  }
+
+  let stats = GameInstance.GetStatsSystem(player.GetGame());
+  let id = Cast<StatsObjectID>(player.GetEntityID());
+
+  if stats.GetStatValue(id, gamedataStatType.IsBlocking) > 0.0 || stats.GetStatValue(id, gamedataStatType.IsDeflecting) > 0.0 {
+    wrappedMethod(hitEvent);
+    return;
+  }
+
+  let flag = RPGManager.CreateStatModifier(gamedataStatType.IsBlocking, gameStatModifierType.Additive, 1.0);
+  stats.AddModifier(id, flag);
+  wrappedMethod(hitEvent);
+  stats.RemoveModifier(id, flag);
+}
+
+@wrapMethod(DamageSystem)
+private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
+  let player = hitEvent.target as PlayerPuppet;
+  if !IsDefined(player) || !hitEvent.attackData.WasBlocked() || !TsunamiSai_HasLeftSai(player) {
+    wrappedMethod(hitEvent);
+    return;
+  }
+  let stats = GameInstance.GetStatsSystem(player.GetGame());
+  let id = Cast<StatsObjectID>(player.GetEntityID());
+
+  if stats.GetStatValue(id, gamedataStatType.IsBlocking) > 0.0 {
+    wrappedMethod(hitEvent);
+    return;
+  }
+
+  let cost = RPGManager.CreateStatModifier(gamedataStatType.BlockFactor, gameStatModifierType.Multiplier, 0.8);
+  stats.AddModifier(id, cost);
+  wrappedMethod(hitEvent);
+  stats.RemoveModifier(id, cost);
+
+  if hitEvent.attackData.WasBlocked() && !StatusEffectSystem.ObjectHasStatusEffect(player, t"BaseStatusEffect.BlockBroken") {
+    AnimationControllerComponent.PushEvent(player, n"MeleeDeflect");
+  }
 }

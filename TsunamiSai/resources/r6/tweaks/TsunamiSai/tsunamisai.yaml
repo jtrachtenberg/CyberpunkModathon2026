@@ -52,6 +52,13 @@ Items.tsunamisai_weapon:
     - !append IconicWeapon
   statModifiers:
     - !append Quality.IconicItem
+    - !append
+      $type: ConstantStatModifier
+      statType: BaseStats.BlockFactor
+      modifierType: Additive
+      value: 0.5  #Adding .5 to each hand off the base .5 gives a total of 2 - better than a normal knife but still below a katana
+
+
   statModifierGroups:
     - !append Items.IconicQualityRandomization
   OnAttach:
