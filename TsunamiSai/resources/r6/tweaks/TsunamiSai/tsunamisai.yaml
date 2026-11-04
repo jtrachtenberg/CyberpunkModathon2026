@@ -36,6 +36,9 @@ Items.tsunamisai_weapon:
   useProjectileAppearance: true
   attacks:
     - !append KnifeAttacks.TsunamiSaiKnifeThrowAttackProjectile
+    - !remove t"KnifeAttacks.KnifeComboAttack1"
+    - !append KnifeAttacks.TsunamiSaiComboAttack1
+    - !append KnifeAttacks.TsunamiSaiDeflectAttack
   visualTags:
     - TsunamiSai
   slotPartListPreset:
@@ -75,3 +78,23 @@ Items.tsunamisai_weapon_left:
 
 Items.tsunamisai_weapon.scaleToPlayer: true  
 Items.tsunamisai_weapon_left.scaleToPlayer: true
+
+KnifeAttacks.TsunamiSaiComboAttack1:
+  $base: KnifeAttacks.KnifeComboAttack1
+  trailAttackSide: tsai
+  trailStartDelay: 0.1
+  trailStopDelay: 0.4
+
+KnifeAttacks.TsunamiSaiDeflectAttack:
+  $base: KnifeAttacks.KnifeComboAttack1
+  attackName: MeleeDeflectAttack0
+  attackSubtype: AttackType.DeflectAttack
+  hitReactionSeverityMin: 2
+  hitReactionSeverityMax: 2
+  attackEffectDelay: 0.16
+  startupDuration: 0.0333
+  activeDuration: 0.3333
+  recoverDuration: 0.45
+  trailAttackSide: tsai
+  trailStartDelay: 0.16
+  trailStopDelay: 0.46

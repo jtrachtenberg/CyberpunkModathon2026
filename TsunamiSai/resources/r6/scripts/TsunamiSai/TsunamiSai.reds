@@ -74,6 +74,15 @@ protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
     return isItemRemovedFromSlot;
 }
 
+@wrapMethod(PlayerPuppet)
+private final func OnHitBlockedOrDeflected(hitEvent: ref<gameHitEvent>) -> Void {
+  wrappedMethod(hitEvent);
+  if TsunamiSai_HasLeftSai(this) && !StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.BlockBroken") {
+    //GameObject.PlaySoundEvent(this, n"block");
+    GameObject.PlaySound(this, n"w_melee_katana_impact_block");
+  }
+}
+
 //return the left sai if equipped in the right hand after a gadget
 @wrapMethod(EquipmentSystemPlayerData)
 public func GetItemIDfromEquipmentManipulationAction(eqManipulationAction: EquipmentManipulationAction, currentState: SSlotActiveItems) -> SSlotActiveItems {
@@ -116,6 +125,21 @@ private final static func ProcessDefensiveState(hitEvent: ref<gameHitEvent>) -> 
   stats.RemoveModifier(id, flag);
 }
 
+//prevent return to rest after an attack and stay on ready
+@wrapMethod(MeleeAttackGenericEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let numberSent: Int32 = stateContext.GetIntParameter(n"meleeAttackNumber", true);
+  wrappedMethod(stateContext, scriptInterface);
+
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    let numberNow: Int32 = stateContext.GetIntParameter(n"meleeAttackNumber", true);
+    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", numberSent, true);
+    this.SendAnimFeatureData(stateContext, scriptInterface);
+    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", numberNow, true);
+  }
+}
+
 @wrapMethod(DamageSystem)
 private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
   let player = hitEvent.target as PlayerPuppet;
@@ -139,4 +163,99 @@ private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
   if hitEvent.attackData.WasBlocked() && !StatusEffectSystem.ObjectHasStatusEffect(player, t"BaseStatusEffect.BlockBroken") {
     AnimationControllerComponent.PushEvent(player, n"MeleeDeflect");
   }
+}
+
+@wrapMethod(MeleeDeflectDecisions)
+protected const func EnterCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  if wrappedMethod(stateContext, scriptInterface) {
+    return true;
+  }
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if !IsDefined(weapon) || !TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    return false;
+  }
+
+  //disable parry without doubletrouble
+  if !PlayerDevelopmentSystem.GetData(scriptInterface.executionOwner).IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Milestone_2) {
+    return false;
+  }
+
+  //default to throw when not in combat
+  if !this.IsPlayerInCombat(scriptInterface) {
+    return false;
+  }
+  return this.IsBlockPressed(stateContext, scriptInterface)
+    && this.CanWeaponDeflect(stateContext, scriptInterface)
+    && !this.GetStaticBoolParameterDefault("disabled", false)
+    && !GameObject.IsCooldownActive(scriptInterface.owner, n"Deflect");
+}
+
+@wrapMethod(MeleeDeflectDecisions)
+protected const func ToMeleeBlock(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    return false;
+  }
+  return wrappedMethod(stateContext, scriptInterface);  
+}
+
+@wrapMethod(MeleeBlockDecisions)
+protected const func ExitCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    return true;
+  }
+  return wrappedMethod(stateContext, scriptInterface);
+}
+
+@wrapMethod(MeleeTargetingEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    scriptInterface.PushAnimationEvent(n"ForceReady");
+  }
+}
+
+@wrapMethod(MeleeDeflectEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    this.SetIsBlocking(stateContext, false);
+    this.SendAnimFeatureData(stateContext, scriptInterface);
+    scriptInterface.PushAnimationEvent(n"MeleeDeflect");
+  }
+}
+
+@wrapMethod(MeleeDeflectAttackEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    
+    //prevent duplicate from base game
+    this.m_slowMoSet = true;
+
+    if !this.IsTimeDilationActive(stateContext, scriptInterface, n"") {
+      scriptInterface.GetTimeSystem().SetTimeDilation(n"deflect",
+        TweakDBInterface.GetFloat(t"TsunamiSai.parrySlowMoAmount", 0.2),
+        TweakDBInterface.GetFloat(t"TsunamiSai.parrySlowMoDuration", 0.5),
+        this.GetStaticCNameParameterDefault("slowMoEaseIn", n"Linear"),
+        this.GetStaticCNameParameterDefault("slowMoEaseOut", n"Linear"));
+    }
+  }
+}
+
+@wrapMethod(MeleeAttackGenericEvents)
+protected func SendAnimationSlotData(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, const attackData: ref<MeleeAttackData>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(this as MeleeDeflectAttackEvents) && IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    let number: Int32 = stateContext.GetIntParameter(n"meleeAttackNumber", true);
+    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", 3, true);
+    let result: Bool = wrappedMethod(stateContext, scriptInterface, attackData);
+    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", number, true);
+    return result;
+  }
+  return wrappedMethod(stateContext, scriptInterface, attackData);
 }
