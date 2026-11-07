@@ -1,0 +1,97 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-11-05T16:47:21.9822037Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\jtrac\\dev\\cp2077-mods\\CyberpunkModathon2026\\TsunamiSai\\archive\\mod\\tsunamisai\\localization\\en-us.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tsunami Sai",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "TsunamiSai-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Applies Extra Bleed, can block with the left hand.  With the right perks, unlock a two handed attack.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "TsunamiSai-Desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Publicly known for it's firearms, Tsunami often did custom work for select Solos.  This set was for a client from Okinawa, who was looking for a weapon both flashy and functional.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "tsunamisai_weapon_mod_desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Paired Knife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "TsunamiSai-WeaponType"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Only affects Power Pistols, Power Revolvers, and Paired Knives",
+              "maleVariant": "",
+              "primaryKey": "97977",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-PerkWeaponGroups-CoolDualWieldingPerkWeaponGroup"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unlocks the ability to <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">dual wield</>, but guns deal <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">-{float_0}% damage</>.\\nWhen aiming:\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">-{float_1}% recoil</>\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">-{float_2}% bullet spread</>\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Simultaneous shooting</> with both guns.\\nQuick press <Input context=\"Combat\" actionName=\"MeleeBlock\" color=\"MainColors.Blue\" hold=\"Hide\"></> to block with paired knives.",
+              "maleVariant": "",
+              "primaryKey": "97463",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Central_Milestone_2_Level1"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Press <Input context=\"Combat\" actionName=\"QuickMelee\" color=\"MainColors.Blue\" hold=\"Hide\"></> to perform a <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Heywood Hurricane</> automatically firing both dual-wield weapons for {int_0} sec., or <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Flurry Strike</> with both knives. Guns fire with <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_0}% bullet spread</>.\\nAmmo spent on successful shots is automatically refilled.\\nReplaces Quick Melee Attack.",
+              "maleVariant": "",
+              "primaryKey": "97464",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Central_Milestone_2_Level2"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "When attacking without aiming:\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">-{float_0}% Stamina cost</>\\n\\nWhen aiming with dual wield:\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">-{float_1}% recoil</>\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">-{float_2}% bullet spread</>",
+              "maleVariant": "",
+              "primaryKey": "97967",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Central_Perk_2_1"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_0}% Mitigation Chance</> after neutralizing an enemy when dual wielding.\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Duration:</> {int_0} sec.\\nStacks {int_1} times.\\n\\nTriple Tequila stacks are consumed when performing a <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Heywood Hurricane or Flurry Strike</>, giving it <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_1}% damage</> per stack.\\nNote: Stacks cannot be earned during a Heywood Hurricane or Flurry Strike.",
+              "maleVariant": "",
+              "primaryKey": "97969",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Central_Perk_2_2"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_0}% attack rate</> for Heywood Hurricane and Flurry Strike.\\n\\nAt max stacks of Triple Tequila:\\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{int_0} sec. duration</> for Heywood Hurricane and Flurry Strike.",
+              "maleVariant": "",
+              "primaryKey": "97970",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Central_Perk_2_3"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

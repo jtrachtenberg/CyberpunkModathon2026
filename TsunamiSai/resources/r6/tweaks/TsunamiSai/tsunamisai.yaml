@@ -75,7 +75,9 @@ Items.tsunamisai_weapon:
 Items.tsunamisai_weapon_left:
   $base: Items.tsunamisai_weapon
   stateMachineName: ""
-
+  placementSlots:
+    - !append AttachmentSlots.TSaiLeftGrip
+    
 Items.tsunamisai_weapon.scaleToPlayer: true  
 Items.tsunamisai_weapon_left.scaleToPlayer: true
 
@@ -98,3 +100,13 @@ KnifeAttacks.TsunamiSaiDeflectAttack:
   trailAttackSide: tsai
   trailStartDelay: 0.16
   trailStopDelay: 0.46
+
+AttachmentSlots.TSaiLeftGrip:
+  $base: AttachmentSlots.WeaponLeft
+  entitySlotName: TSaiLeftGrip
+  # Don't confuse the weapon wheel
+  tagsForActiveItemCycling: []
+
+Character.Player_Puppet_Base:
+  attachmentSlots:
+    - !append AttachmentSlots.TSaiLeftGrip

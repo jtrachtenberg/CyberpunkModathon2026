@@ -1,53 +1,27 @@
 module TsunamiSai
 
-private func TsunamiSai_IsTsunamiSai(id: ItemID) -> Bool {
-    return ItemID.GetTDBID(id) == t"Items.tsunamisai_weapon";
-}
-
-private func TsunamiSai_HasLeftSai(player: ref<PlayerPuppet>) -> Bool {
-  let left = GameInstance.GetTransactionSystem(player.GetGame()).GetItemInSlot(player, t"AttachmentSlots.WeaponLeft");
-  return IsDefined(left) && ItemID.GetTDBID(left.GetItemID()) == t"Items.tsunamisai_weapon_left";
-}
-
-private func TsunamiSai_GetFreeSaiID(player: ref<PlayerPuppet>, rightHandItemId: ItemID) -> ItemID {
-    let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
-    let equipment: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
-    let items: array<wref<gameItemData>>;
-    transactionSystem.GetItemList(player, items);
-    for item in items {
-        if TsunamiSai_IsTsunamiSai(item.GetID()) && item.GetID() != rightHandItemId && !equipment.IsEquipped(item.GetID()) {
-            return item.GetID();
-        }
-    }
-    return ItemID.None();
-}
-
-//reuse to allow a vanilla path to reequip the left hand after gadget when a Sai in drawn
-private func TsunamiSai_FindLeftSai(player: ref<PlayerPuppet>) -> ItemID {
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
-  let weaponLeftRecord: TweakDBID = t"Items.tsunamisai_weapon_left";
-  let leftHandItem: ItemID = ItemID.None();
-  let inv: array<wref<gameItemData>>;
-  transactionSystem.GetItemList(player, inv);
-  for item in inv {
-      if ItemID.GetTDBID(item.GetID()) == weaponLeftRecord {
-          leftHandItem = item.GetID();
-      }
+@wrapMethod(UIItemsHelper)
+public final static func GetItemTypeKey(itemID: TweakDBID, itemType: gamedataItemType, weaponEvolutionType: gamedataWeaponEvolution) -> String {
+  if itemID == t"Items.tsunamisai_weapon" || itemID == t"Items.tsunamisai_weapon_left" {
+    return GetLocalizedTextByKey(n"TsunamiSai-WeaponType");
   }
-
-  return leftHandItem;
+  return wrappedMethod(itemID, itemType, weaponEvolutionType);
 }
 
-private func TsunamiSai_AddLeftSai(player: ref<PlayerPuppet>) -> Void {
-  let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
-  let leftHandItem: ItemID = TsunamiSai_FindLeftSai(player);
-
-  //first draw
-  if !ItemID.IsValid(leftHandItem) {
-      leftHandItem = ItemID.FromTDBID(t"Items.tsunamisai_weapon_left");
-      transactionSystem.GiveItem(player, leftHandItem, 1);
+@wrapMethod(InventoryItemDisplayController)
+protected func NewUpdateWeaponType(itemData: wref<UIInventoryItem>) -> Void {
+  wrappedMethod(itemData);
+  if IsDefined(itemData) && itemData.GetTweakDBID() == t"Items.tsunamisai_weapon" {
+    inkTextRef.SetText(this.m_weaponType, GetLocalizedTextByKey(n"TsunamiSai-WeaponType"));
   }
-  transactionSystem.AddItemToSlot(player, t"AttachmentSlots.WeaponLeft", leftHandItem);
+}
+
+@wrapMethod(InventoryItemDisplayController)
+protected func RefreshUI() -> Void {
+  wrappedMethod();
+  if ItemID.GetTDBID(InventoryItemData.GetID(this.m_itemData)) == t"Items.tsunamisai_weapon" {
+    inkTextRef.SetText(this.m_weaponType, GetLocalizedTextByKey(n"TsunamiSai-WeaponType"));
+  }
 }
 
 @wrapMethod(PlayerPuppet)
@@ -55,23 +29,35 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
     let isItemAddedToSlot = wrappedMethod(evt);
     if TsunamiSai_IsTsunamiSai(evt.GetItemID()) && evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
       TsunamiSai_AddLeftSai(this);
+      TsunamiSai_ShowLeftSaiIfBack(this);
     }
+    if ItemID.GetTDBID(evt.GetItemID()) == t"Items.tsunamisai_weapon_left" {
+      AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai", 1.0);
+      TsunamiSai_ShowLeftSaiIfBack(this);
+    }
+    // handle grenades and other left hand items
+    if evt.GetSlotID() == t"AttachmentSlots.WeaponLeft" {
+      TsunamiSai_ShowLeftSaiIfBack(this);
+    }        
     return isItemAddedToSlot;
 }
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
-    let isItemRemovedFromSlot = wrappedMethod(evt);
+  let isItemRemovedFromSlot = wrappedMethod(evt);
 
-    if TsunamiSai_IsTsunamiSai(evt.GetItemID()) && evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
-        let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(this.GetGame());
-        let left: ref<ItemObject> = transactionSystem.GetItemInSlot(this, t"AttachmentSlots.WeaponLeft");
-        if IsDefined(left) && ItemID.GetTDBID(left.GetItemID()) == t"Items.tsunamisai_weapon_left" {
-            transactionSystem.RemoveItemFromSlot(this, t"AttachmentSlots.WeaponLeft", true);
-        }
+  if TsunamiSai_IsTsunamiSai(evt.GetItemID()) && evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
+    if IsDefined(TsunamiSai_GetLeftSaiObject(this)) {
+      GameInstance.GetTransactionSystem(this.GetGame()).RemoveItemFromSlot(this, t"AttachmentSlots.TSaiLeftGrip", true);
     }
+    AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai", 0.0);
+  }
 
-    return isItemRemovedFromSlot;
+  if evt.GetSlotID() == t"AttachmentSlots.WeaponLeft" {
+    TsunamiSai_ShowLeftSaiIfBack(this);
+  }
+
+  return isItemRemovedFromSlot;
 }
 
 @wrapMethod(PlayerPuppet)
@@ -81,25 +67,6 @@ private final func OnHitBlockedOrDeflected(hitEvent: ref<gameHitEvent>) -> Void 
     //GameObject.PlaySoundEvent(this, n"block");
     GameObject.PlaySound(this, n"w_melee_katana_impact_block");
   }
-}
-
-//return the left sai if equipped in the right hand after a gadget
-@wrapMethod(EquipmentSystemPlayerData)
-public func GetItemIDfromEquipmentManipulationAction(eqManipulationAction: EquipmentManipulationAction, currentState: SSlotActiveItems) -> SSlotActiveItems {
-  let state: SSlotActiveItems = wrappedMethod(eqManipulationAction, currentState);
-  if this.IsEquipmentManipulationAnUnequipRequest(eqManipulationAction)
-      && Equals(this.GetRequestSlotFromEquipmentManipulationAction(eqManipulationAction), EquipmentManipulationRequestSlot.Left)
-      && !ItemID.IsValid(state.leftHandItem)
-      && TsunamiSai_IsTsunamiSai(state.rightHandItem) {
-    let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
-    if IsDefined(player) {
-      let leftSai: ItemID = TsunamiSai_FindLeftSai(player);
-      if ItemID.IsValid(leftSai) {
-        state.leftHandItem = leftSai;
-      }
-    }
-  }
-  return state;
 }
 
 @wrapMethod(DamageManager)
@@ -140,6 +107,19 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   }
 }
 
+@wrapMethod(MeleeAttackGenericEvents)
+protected func SendAnimationSlotData(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, const attackData: ref<MeleeAttackData>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(this as MeleeDeflectAttackEvents) && IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    let number: Int32 = stateContext.GetIntParameter(n"meleeAttackNumber", true);
+    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", 3, true);
+    let result: Bool = wrappedMethod(stateContext, scriptInterface, attackData);
+    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", number, true);
+    return result;
+  }
+  return wrappedMethod(stateContext, scriptInterface, attackData);
+}
+
 @wrapMethod(DamageSystem)
 private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
   let player = hitEvent.target as PlayerPuppet;
@@ -166,6 +146,15 @@ private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
 }
 
 @wrapMethod(MeleeDeflectDecisions)
+protected const func ToMeleeBlock(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    return false;
+  }
+  return wrappedMethod(stateContext, scriptInterface);  
+}
+
+@wrapMethod(MeleeDeflectDecisions)
 protected const func EnterCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
   if wrappedMethod(stateContext, scriptInterface) {
     return true;
@@ -180,6 +169,11 @@ protected const func EnterCondition(const stateContext: ref<StateContext>, const
     return false;
   }
 
+  //also if the left sai is in the right hand waiting after a throw
+  if !TsunamiSai_HasLeftSai(scriptInterface.executionOwner as PlayerPuppet) {
+    return false;
+  }
+
   //default to throw when not in combat
   if !this.IsPlayerInCombat(scriptInterface) {
     return false;
@@ -188,15 +182,6 @@ protected const func EnterCondition(const stateContext: ref<StateContext>, const
     && this.CanWeaponDeflect(stateContext, scriptInterface)
     && !this.GetStaticBoolParameterDefault("disabled", false)
     && !GameObject.IsCooldownActive(scriptInterface.owner, n"Deflect");
-}
-
-@wrapMethod(MeleeDeflectDecisions)
-protected const func ToMeleeBlock(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
-  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
-    return false;
-  }
-  return wrappedMethod(stateContext, scriptInterface);  
 }
 
 @wrapMethod(MeleeBlockDecisions)
@@ -247,15 +232,48 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   }
 }
 
-@wrapMethod(MeleeAttackGenericEvents)
-protected func SendAnimationSlotData(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, const attackData: ref<MeleeAttackData>) -> Bool {
+@wrapMethod(MeleeThrowReloadEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
   let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
-  if IsDefined(this as MeleeDeflectAttackEvents) && IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
-    let number: Int32 = stateContext.GetIntParameter(n"meleeAttackNumber", true);
-    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", 3, true);
-    let result: Bool = wrappedMethod(stateContext, scriptInterface, attackData);
-    stateContext.SetPermanentIntParameter(n"meleeAttackNumber", number, true);
-    return result;
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(weapon) && IsDefined(player) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    let pools = GameInstance.GetStatPoolsSystem(player.GetGame());
+    if IsDefined(player.m_tsunamiSaiThrowTimer) {
+      pools.RequestUnregisteringListener(Cast<StatsObjectID>(player.m_tsunamiSaiThrowTimerWeapon), gamedataStatPoolType.ThrowRecovery, player.m_tsunamiSaiThrowTimer);
+    }
+    player.m_tsunamiSaiThrowTimer = new TsunamiSai_ThrowTimerListener();
+    player.m_tsunamiSaiThrowTimer.Bind(player);
+    player.m_tsunamiSaiThrowTimerWeapon = weapon.GetEntityID();
+    pools.RequestRegisteringListener(Cast<StatsObjectID>(weapon.GetEntityID()), gamedataStatPoolType.ThrowRecovery, player.m_tsunamiSaiThrowTimer);
   }
-  return wrappedMethod(stateContext, scriptInterface, attackData);
 }
+
+@wrapMethod(MeleeThrowReloadEvents)
+public func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(weapon) && IsDefined(player) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    TsunamiSai_ShowLeftSaiIfBack(player);
+  }
+}
+
+@wrapMethod(MeleeThrowReloadDecisions)
+protected const func ExitCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    return this.GetInStateTime() > TweakDBInterface.GetFloat(t"TsunamiSai.handoffDelay", 0.1);
+  }
+  return wrappedMethod(stateContext, scriptInterface);
+}
+
+@wrapMethod(MeleeTargetingDecisions)
+protected const func EnterCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) && MeleeTransition.IsThrownWeaponReloading(stateContext, scriptInterface) {
+    return false;
+  }
+  return wrappedMethod(stateContext, scriptInterface);
+}
+
