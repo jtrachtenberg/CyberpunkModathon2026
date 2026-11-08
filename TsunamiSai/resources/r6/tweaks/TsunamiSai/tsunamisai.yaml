@@ -142,3 +142,46 @@ NewPerks.Cool_Right_Perk_3_3:
 NewPerks.CoolAttributeData:
   perks:
     - !append NewPerks.Cool_Right_Perk_3_3    
+
+#Finisher
+Prereqs.TsunamiSaiDecapDelay:
+  $base: Prereqs.DurationPrereq
+  duration: 1.3
+
+Effectors.TsunamiSaiDecapFinisher:
+  $base: Effectors.PlayerKatanaFinisher
+  prereqRecord: Prereqs.TsunamiSaiDecapDelay
+
+#Flurry
+BaseStatusEffect.TsunamiSaiFlurryTequila:
+  $base: BaseStatusEffect.ValentinosFrenzyTripleTequilaStackSE
+  duration:
+    statModifiers:
+      - $type: ConstantStatModifier
+        statType: BaseStats.MaxDuration
+        modifierType: Additive
+        value: 3.0
+  removeAllStacksWhenDurationEnds: true
+
+BaseStatusEffect.TsunamiSaiFlurryRate:
+  $type: gamedataStatusEffect_Record
+  $base: BaseStatusEffect.ValentinosFrenzySE
+  gameplayTags: []
+  duration:
+    statModifiers:
+      - $type: ConstantStatModifier
+        statType: BaseStats.MaxDuration
+        modifierType: Additive
+        value: 3.0
+  packages:
+    - $type: GameplayLogicPackage
+      effectors:        
+        - $type: gamedataApplyStatGroupEffector_Record
+          $base: Perks.ApplyStatGroupOnWeapon
+          statGroup:
+            $type: StatModifierGroup
+            statModifiers:
+              - $type: ConstantStatModifier
+                statType: BaseStats.AttackSpeed
+                modifierType: AdditiveMultiplier
+                value: 0.83

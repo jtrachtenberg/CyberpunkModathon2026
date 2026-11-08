@@ -170,3 +170,108 @@ private func TsunamiSai_LeftTrail(player: ref<PlayerPuppet>, start: Bool) -> Voi
     GameObjectEffectHelper.BreakEffectLoopEvent(left, name);
   }
 }
+
+//Flurry
+@addField(PlayerPuppet) public let m_tsunamiSaiFlurryStart: Bool;
+@addField(PlayerPuppet) public let m_tsunamiSaiFlurryEnd: Float;   
+@addField(PlayerPuppet) public let m_tsunamiSaiFlurryNextLeft: Bool;
+@addField(PlayerPuppet) public let m_tsunamiSaiFlurryStacks: Int32;
+@addField(PlayerPuppet) public let m_tsunamiSaiFlurryRefund: Float;
+
+private func TsunamiSai_Now(player: ref<PlayerPuppet>) -> Float {
+  return EngineTime.ToFloat(GameInstance.GetSimTime(player.GetGame()));
+}
+
+private func TsunamiSai_InFlurry(player: ref<PlayerPuppet>) -> Bool {
+  return player.m_tsunamiSaiFlurryEnd > 0.0 && TsunamiSai_Now(player) < player.m_tsunamiSaiFlurryEnd;
+}
+
+private func TsunamiSai_StartFlurry(player: ref<PlayerPuppet>) -> Void {
+  let game = player.GetGame();
+  let id = player.GetEntityID();
+  let effects = GameInstance.GetStatusEffectSystem(game);
+  let stacks: Int32 = TsunamiSai_TequilaStacks(player);
+  let atMax: Bool = false;
+  let applied: array<ref<StatusEffect>>;
+  effects.GetAppliedEffectsWithID(id, t"BaseStatusEffect.Triple_Tequila_Stack", applied);
+  if ArraySize(applied) > 0 {
+    atMax = applied[0].GetStackCount() >= applied[0].GetMaxStacks();
+  }
+  let perks = PlayerDevelopmentSystem.GetData(player);
+  let duration: Float = GameInstance.GetStatsSystem(game).GetStatValue(Cast<StatsObjectID>(id), gamedataStatType.ValentinosFrenzy_Duration);
+  if atMax && perks.IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Perk_2_3) {
+    duration += 1.0;
+  }
+  StatusEffectHelper.ApplyStatusEffectForTimeWindow(player, t"BaseStatusEffect.ValentinosFrenzySE", id, 0.0, duration);
+  if stacks > 0 {
+    effects.ApplyStatusEffect(id, t"BaseStatusEffect.TsunamiSaiFlurryTequila", t"", id, Cast<Uint32>(stacks));
+  }
+  if perks.IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Perk_2_3) {
+    StatusEffectHelper.ApplyStatusEffect(player, t"BaseStatusEffect.TsunamiSaiFlurryRate");
+  }
+  StatusEffectHelper.RemoveStatusEffect(player, t"BaseStatusEffect.Triple_Tequila_Stack");
+  player.m_tsunamiSaiFlurryStacks = stacks;
+  player.m_tsunamiSaiFlurryEnd = TsunamiSai_Now(player) + duration;
+  player.m_tsunamiSaiFlurryNextLeft = false;
+}
+
+// Vanilla's end (ValentinosFrenzyEvents.OnExit, shootTransitions.script:600-607).
+private func TsunamiSai_EndFlurry(player: ref<PlayerPuppet>) -> Void {
+  if player.m_tsunamiSaiFlurryEnd <= 0.0 {
+    return;
+  }
+  player.m_tsunamiSaiFlurryEnd = 0.0;
+  player.m_tsunamiSaiFlurryRefund = 0.0;
+  StatusEffectHelper.RemoveStatusEffect(player, t"BaseStatusEffect.ValentinosFrenzySE");
+  if player.m_tsunamiSaiFlurryStacks > 0 {
+    StatusEffectHelper.RemoveStatusEffect(player, t"BaseStatusEffect.TsunamiSaiFlurryTequila", Cast<Uint32>(player.m_tsunamiSaiFlurryStacks));
+  }
+  StatusEffectHelper.RemoveStatusEffect(player, t"BaseStatusEffect.TsunamiSaiFlurryRate");
+  player.m_tsunamiSaiFlurryStacks = 0;
+}
+
+private func TsunamiSai_RefreshHud(player: ref<PlayerPuppet>) -> Void {
+  let bb = GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_EquipmentData);
+  if IsDefined(bb) {
+    bb.SignalVariant(GetAllBlackboardDefs().UI_EquipmentData.EquipmentData);
+  }
+}
+
+private func TsunamiSai_FinisherOffered(player: ref<PlayerPuppet>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  if !player.PlayerLastUsedPad() {
+    return false;
+  }
+  let target = DefaultTransition.GetTargetObject(scriptInterface, 5.0);
+  if !IsDefined(target) {
+    return false;
+  }
+  let condition = new NewPerkFinisherCondition();
+  return condition.Test(player, target);
+}
+
+//Heavy Block
+@addField(PlayerPuppet)
+public let m_tsunamiSaiReloadDownAt: Float;
+@addField(PlayerPuppet)
+public let m_tsunamiSaiHeavyBlock: Bool;
+@addField(NPCPuppet)
+public let m_tsunamiSaiDisarms: Int32;
+@addField(PlayerPuppet)
+public let m_tsunamiSaiBlockDownAt: Float;  
+ 
+private func TsunamiSai_Disarm(npc: ref<NPCPuppet>) -> Void {
+  npc.DropWeapons();
+  StatusEffectHelper.ApplyStatusEffect(npc, t"BaseStatusEffect.Stagger");
+  npc.m_tsunamiSaiDisarms += 1;
+  if npc.m_tsunamiSaiDisarms >= 2 {
+    StatusEffectHelper.ApplyStatusEffect(npc, t"BaseStatusEffect.CrippledArmRight");
+    let ts = GameInstance.GetTransactionSystem(npc.GetGame());
+    let items: array<wref<gameItemData>>;
+    ts.GetItemList(npc, items);
+    for it in items {
+      if IsDefined(it) && (it.HasTag(n"Weapon") || it.HasTag(n"MeleeWeapon") || it.HasTag(n"RangedWeapon")) {
+        ts.RemoveItem(npc, it.GetID(), it.GetQuantity());
+      }
+    }
+  }
+}
