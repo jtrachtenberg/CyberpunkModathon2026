@@ -30,6 +30,7 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
     if TsunamiSai_IsTsunamiSai(evt.GetItemID()) && evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
       TsunamiSai_AddLeftSai(this);
       TsunamiSai_ShowLeftSaiIfBack(this);
+      AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai_dt", TsunamiSai_HasDoubleTrouble(this) ? 1.0 : 0.0);
     }
     if ItemID.GetTDBID(evt.GetItemID()) == t"Items.tsunamisai_weapon_left" {
       AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai", 1.0);
@@ -47,10 +48,9 @@ protected cb func OnItemRemovedFromSlot(evt: ref<ItemRemovedFromSlot>) -> Bool {
   let isItemRemovedFromSlot = wrappedMethod(evt);
 
   if TsunamiSai_IsTsunamiSai(evt.GetItemID()) && evt.GetSlotID() == t"AttachmentSlots.WeaponRight" {
-    if IsDefined(TsunamiSai_GetLeftSaiObject(this)) {
-      GameInstance.GetTransactionSystem(this.GetGame()).RemoveItemFromSlot(this, t"AttachmentSlots.TSaiLeftGrip", true);
-    }
+    TsunamiSai_RemoveLeftSai(this);
     AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai", 0.0);
+    AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai_dt", 0.0);
   }
 
   if evt.GetSlotID() == t"AttachmentSlots.WeaponLeft" {
@@ -69,11 +69,73 @@ private final func OnHitBlockedOrDeflected(hitEvent: ref<gameHitEvent>) -> Void 
   }
 }
 
+@wrapMethod(PlayerDevelopmentData)
+public func BuyNewPerk(perkType: gamedataNewPerkType, opt forceBuy: Bool) -> Bool {
+  let bought = wrappedMethod(perkType, forceBuy);
+  if bought && Equals(perkType, gamedataNewPerkType.Cool_Central_Milestone_2) {
+    let player = this.m_owner as PlayerPuppet;
+    if IsDefined(player) {
+      TsunamiSai_RefreshDoubleTrouble(player);
+    }
+  }
+  return bought;
+}
+
+@wrapMethod(PlayerDevelopmentData)
+public func SellNewPerk(perkType: gamedataNewPerkType, out perkLevelSold: Int32) -> Bool {
+  let sold = wrappedMethod(perkType, perkLevelSold);
+  if sold && Equals(perkType, gamedataNewPerkType.Cool_Central_Milestone_2) {
+    let player = this.m_owner as PlayerPuppet;
+    if IsDefined(player) {
+      TsunamiSai_RefreshDoubleTrouble(player);
+    }
+  }
+  return sold;
+}
+
+@wrapMethod(PlayerDevelopmentData)
+public func ForceSellNewPerk(perkType: gamedataNewPerkType, out perkLevelSold: Int32) -> Bool {
+  let sold = wrappedMethod(perkType, perkLevelSold);
+  if sold && Equals(perkType, gamedataNewPerkType.Cool_Central_Milestone_2) {
+    let player = this.m_owner as PlayerPuppet;
+    if IsDefined(player) {
+      TsunamiSai_RefreshDoubleTrouble(player);
+    }
+  }
+  return sold;
+}
+
+//Triple Tequila
+@wrapMethod(PlayerPuppet)
+protected cb func OnTargetNeutraliziedEvent(evt: ref<TargetNeutraliziedEvent>) -> Bool {
+  let stacks: Int32 = TsunamiSai_TequilaStacks(this);
+  let result = wrappedMethod(evt);
+  if !TsunamiSai_HasLeftSai(this) {
+    return result;
+  }
+  let perks = PlayerDevelopmentSystem.GetData(this);
+
+  if perks.IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Perk_2_2)
+    && !StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.ValentinosFrenzySE") {
+    StatusEffectHelper.ApplyStatusEffect(this, t"BaseStatusEffect.Triple_Tequila_Stack", this.GetEntityID());
+  }  
+
+  //Keep 'em comin'
+  if perks.IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Perk_2_4) {
+    let bonus: Float = 40.0 + 20.0 * Cast<Float>(stacks);
+    if StatusEffectSystem.ObjectHasStatusEffect(this, t"BaseStatusEffect.HighTabLogic") {
+      bonus -= 40.0;
+    }
+    PlayerStaminaHelpers.ModifyStamina(this, bonus);
+  }
+  return result;  
+}
+
 @wrapMethod(DamageManager)
 private final static func ProcessDefensiveState(hitEvent: ref<gameHitEvent>) -> Void {
   let player = hitEvent.target as PlayerPuppet;
 
-  if !IsDefined(player) || !AttackData.IsMelee(hitEvent.attackData.GetAttackType()) || !TsunamiSai_HasLeftSai(player) {
+  if !IsDefined(player) || !AttackData.IsMelee(hitEvent.attackData.GetAttackType()) || !TsunamiSai_HasLeftSai(player) || !TsunamiSai_HasAutoBlockPerk(player) {
     wrappedMethod(hitEvent);
     return;
   }
@@ -108,6 +170,29 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
 }
 
 @wrapMethod(MeleeAttackGenericEvents)
+public func OnUpdate(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(timeDelta, stateContext, scriptInterface);
+  let p = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(p) && p.m_tsunamiSaiLeftStab {
+    let t = this.GetInStateTime();
+    if !p.m_tsunamiSaiLeftTrailOn && t >= 0.1 {
+      TsunamiSai_LeftTrail(p, true);
+      p.m_tsunamiSaiLeftTrailOn = true;
+    } else if p.m_tsunamiSaiLeftTrailOn && !p.m_tsunamiSaiLeftTrailDone && t >= 0.4 {
+      TsunamiSai_LeftTrail(p, false);
+      p.m_tsunamiSaiLeftTrailDone = true;
+    }
+  }  
+  if this.GetInStateTime() > 0.1 && scriptInterface.IsActionJustPressed(n"Reload") {
+    let player = scriptInterface.executionOwner as PlayerPuppet;
+    if TsunamiSai_CanLeftAttack(player, MeleeTransition.GetWeaponObject(scriptInterface)) {
+      player.m_tsunamiSaiLeftAttackPending = true;
+      stateContext.SetConditionBoolParameter(n"LightMeleeAttackPressed", true, true);
+    }
+  }
+}
+
+@wrapMethod(MeleeAttackGenericEvents)
 protected func SendAnimationSlotData(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, const attackData: ref<MeleeAttackData>) -> Bool {
   let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
   if IsDefined(this as MeleeDeflectAttackEvents) && IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
@@ -118,6 +203,30 @@ protected func SendAnimationSlotData(stateContext: ref<StateContext>, scriptInte
     return result;
   }
   return wrappedMethod(stateContext, scriptInterface, attackData);
+}
+
+@wrapMethod(MeleeAttackGenericEvents)
+public func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(player) && player.m_tsunamiSaiLeftStab {
+    if player.m_tsunamiSaiLeftTrailOn && !player.m_tsunamiSaiLeftTrailDone {
+      TsunamiSai_LeftTrail(player, false);
+    }
+    player.m_tsunamiSaiLeftStab = false;
+  }  
+  if IsDefined(player) && !stateContext.GetConditionBool(n"LightMeleeAttackPressed") {
+    player.m_tsunamiSaiLeftAttackPending = false;
+  }
+}
+
+@wrapMethod(MeleeFinalAttackDecisions)
+protected const func EnterCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(player) && player.m_tsunamiSaiLeftAttackPending {
+    return false;
+  }
+  return wrappedMethod(stateContext, scriptInterface);
 }
 
 @wrapMethod(DamageSystem)
@@ -165,7 +274,7 @@ protected const func EnterCondition(const stateContext: ref<StateContext>, const
   }
 
   //disable parry without doubletrouble
-  if !PlayerDevelopmentSystem.GetData(scriptInterface.executionOwner).IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Milestone_2) {
+  if !TsunamiSai_HasDoubleTrouble(scriptInterface.executionOwner as PlayerPuppet) {
     return false;
   }
 
@@ -277,3 +386,90 @@ protected const func EnterCondition(const stateContext: ref<StateContext>, const
   return wrappedMethod(stateContext, scriptInterface);
 }
 
+@wrapMethod(MeleeComboAttackDecisions)
+protected const func EnterCondition(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  if wrappedMethod(stateContext, scriptInterface) {
+    return true;
+  }
+  if !scriptInterface.IsActionJustPressed(n"Reload") {
+    return false;
+  }
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  if !TsunamiSai_CanLeftAttack(player, MeleeTransition.GetWeaponObject(scriptInterface)) {
+    return false;
+  }
+  if !this.HasAttackRecord(scriptInterface, stateContext.GetIntParameter(n"meleeAttackNumber", true))
+    || GameObject.IsCooldownActive(scriptInterface.owner, MeleeTransition.GetMeleeAttackCooldownName())
+    || MeleeTransition.IsPlayingSyncedAnimation(scriptInterface) {
+    return false;
+  }
+  player.m_tsunamiSaiLeftAttackPending = true;
+  return true;
+}
+
+@wrapMethod(MeleeComboAttackEvents)
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  if !IsDefined(player) || !player.m_tsunamiSaiLeftAttackPending {
+    wrappedMethod(stateContext, scriptInterface);
+    return;
+  }
+  player.m_tsunamiSaiLeftAttackPending = false;
+  player.m_tsunamiSaiLeftStab = true;
+  player.m_tsunamiSaiLeftTrailOn = false;
+  player.m_tsunamiSaiLeftTrailDone = false;
+  let chain: Int32 = stateContext.GetIntParameter(n"meleeAttackNumber", true);
+  stateContext.SetPermanentIntParameter(n"meleeAttackNumber", 4, true);
+  wrappedMethod(stateContext, scriptInterface);
+  stateContext.SetPermanentIntParameter(n"meleeAttackNumber", chain, true);
+}
+
+@addMethod(NewPerksPerkContainerLogicController)
+public func TsunamiSai_AddWire(target: gamedataNewPerkSlotType, wire: ref<inkWidget>) -> Void {
+  let ref: inkWidgetRef;
+  ref.widget = wire;
+  let connection: NewPerksWireConnection;
+  connection.m_targetSlot = target;
+  ArrayPush(connection.m_wires, ref);
+  ArrayPush(this.m_wiresConnections, connection);
+}
+
+//Two Right Hands
+@wrapMethod(MeleeTransition)
+protected func ConsumeStamina(scriptInterface: ref<StateGameScriptInterface>, attackData: ref<MeleeAttackData>) -> Void {
+  let player = scriptInterface.executionOwner as PlayerPuppet;
+  let weapon = MeleeTransition.GetWeaponObject(scriptInterface);
+  if !IsDefined(player) || !IsDefined(weapon) || !TsunamiSai_IsTsunamiSai(weapon.GetItemID())
+    || IsDefined(this as MeleeThrowAttackEvents)
+    || !PlayerDevelopmentSystem.GetData(player).IsNewPerkBoughtAnyLevel(gamedataNewPerkType.Cool_Central_Perk_2_1) {
+    wrappedMethod(scriptInterface, attackData);
+    return;
+  }
+  let cost: Float = attackData.staminaCost;
+  attackData.staminaCost = cost * 0.75;
+  wrappedMethod(scriptInterface, attackData);
+  attackData.staminaCost = cost;
+}
+
+@wrapMethod(WeaponRosterGameController)
+protected cb func OnWeaponDataChanged(value: Variant) -> Bool {
+  let result = wrappedMethod(value);
+
+  if !this.m_isUnholstered || ItemID.IsValid(this.m_activeLeftWeapon.weaponID) {
+    return result;
+  }
+  if !TsunamiSai_IsTsunamiSai(this.m_activeRightWeapon.weaponID) {
+    return result;
+  }
+  let left = TsunamiSai_GetLeftSaiObject(this.m_player);
+  if !IsDefined(left) {
+    return result;
+  }
+  
+  let data: SlotWeaponData;
+  data.weaponID = left.GetItemID();
+  this.ChangeWeaponData(data, this.m_leftWeaponItemData, this.m_leftWeaponRecord, this.m_leftWeaponName, true);
+  this.ToggleLeftWeaponVisibility(true);
+  this.m_activeLeftWeapon = data;
+  return result;
+}

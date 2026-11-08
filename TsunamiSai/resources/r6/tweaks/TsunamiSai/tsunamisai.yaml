@@ -3,6 +3,11 @@ UIIcon.TsunamiSaiIcon:
     atlasResourcePath: mod\tsunamisai\icons.inkatlas
     atlasPartName: sai_weapon_icon
 
+UIIcon.TsunamiSaiPerkIcon:
+    $type: UIIcon
+    atlasResourcePath: mod\tsunamisai\icons.inkatlas
+    atlasPartName: sai_perk_icon
+
 Items.tsunamisai_weapon_mod_ability:
   $base: Items.IconicWeaponModAbilityBase
   UIData:
@@ -39,6 +44,7 @@ Items.tsunamisai_weapon:
     - !remove t"KnifeAttacks.KnifeComboAttack1"
     - !append KnifeAttacks.TsunamiSaiComboAttack1
     - !append KnifeAttacks.TsunamiSaiDeflectAttack
+    - !append KnifeAttacks.TsunamiSaiLeftAttack
   visualTags:
     - TsunamiSai
   slotPartListPreset:
@@ -77,6 +83,7 @@ Items.tsunamisai_weapon_left:
   stateMachineName: ""
   placementSlots:
     - !append AttachmentSlots.TSaiLeftGrip
+    - !append AttachmentSlots.TSaiLeftGripDT
     
 Items.tsunamisai_weapon.scaleToPlayer: true  
 Items.tsunamisai_weapon_left.scaleToPlayer: true
@@ -101,12 +108,37 @@ KnifeAttacks.TsunamiSaiDeflectAttack:
   trailStartDelay: 0.16
   trailStopDelay: 0.46
 
+KnifeAttacks.TsunamiSaiLeftAttack:
+  $base: KnifeAttacks.TsunamiSaiComboAttack1
+  attackName: MeleeComboAttack4
+  trailStartDelay: 9.0
+  trailStopDelay: 9.5
+
 AttachmentSlots.TSaiLeftGrip:
   $base: AttachmentSlots.WeaponLeft
   entitySlotName: TSaiLeftGrip
-  # Don't confuse the weapon wheel
   tagsForActiveItemCycling: []
+
+AttachmentSlots.TSaiLeftGripDT:
+  $base: AttachmentSlots.WeaponLeft
+  entitySlotName: TSaiLeftGripDT
+  tagsForActiveItemCycling: [] 
 
 Character.Player_Puppet_Base:
   attachmentSlots:
     - !append AttachmentSlots.TSaiLeftGrip
+    - !append AttachmentSlots.TSaiLeftGripDT
+
+#take advantage of unused perk slot
+NewPerks.Cool_Right_Perk_3_3:
+  slot: NewPerks.Inbetween_Right_2
+  
+  requiresPerks:
+    - NewPerks.Cool_Central_Perk_2_3
+    - NewPerks.Cool_Right_Perk_2_4
+  tier: NewPerks.AdeptNewPerkTier
+  perkIcon: UIIcon.TsunamiSaiPerkIcon
+
+NewPerks.CoolAttributeData:
+  perks:
+    - !append NewPerks.Cool_Right_Perk_3_3    

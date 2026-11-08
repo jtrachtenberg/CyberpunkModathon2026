@@ -27,7 +27,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Applies Extra Bleed, can block with the left hand.  With the right perks, unlock a two handed attack.",
+              "femaleVariant": "Applies Extra Bleed, left Sai passes to right after throw.  With the Double Trouble perk tree, unlock blocks, parry, and a two handed attack.",
               "maleVariant": "",
               "primaryKey": "0",
               "secondaryKey": "TsunamiSai-Desc"
@@ -87,6 +87,20 @@
               "maleVariant": "",
               "primaryKey": "97970",
               "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Central_Perk_2_3"
+            },
+                        {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Left Leaning",
+              "maleVariant": "",
+              "primaryKey": "87948",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Names-Cool-Cool_Right_Perk_3_3"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Automatically blocks with the left hand while wielding paired knives.",
+              "maleVariant": "",
+              "primaryKey": "87947",
+              "secondaryKey": "Gameplay-RPG-CharDev-New_Perks-Descriptions-Cool-Cool_Right_Perk_3_3"
             }
           ]
         }
