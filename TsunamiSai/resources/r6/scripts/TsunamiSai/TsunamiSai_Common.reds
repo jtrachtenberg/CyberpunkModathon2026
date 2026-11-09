@@ -93,18 +93,17 @@ private func TsunamiSai_TequilaStacks(player: ref<PlayerPuppet>) -> Int32 {
 }
 
 //Add UI for new Perk
-private func TsunamiSai_MakeWire(name: CName, part: CName, anchor: inkEAnchor, anchorX: Float, width: Float) -> ref<inkImage> {
+private func TsunamiSai_MakeWire(name: CName, left: Bool) -> ref<inkImage> {
   let wire = new inkImage();
   wire.SetName(name);
   wire.SetAtlasResource(r"base\\gameplay\\gui\\fullscreen\\perks\\perks_new.inkatlas");
-  wire.SetTexturePart(part);
+  wire.SetTexturePart(n"wire_CPerk1_1_to_CPerk1_3");   
   wire.SetFitToContent(false);
-  wire.SetSize(width, 58.0);
-  wire.SetAnchor(anchor);
-  wire.SetAnchorPoint(anchorX, 1.0);
-  wire.SetMargin(0.0, 0.0, 0.0, 55.0);   // WIRE_MARGIN_BOTTOM
-  wire.BindProperty(n"tintColor", n"PerkWire.wireColor");
-  wire.SetVisible(false);
+  wire.SetSize(161.0, 26.0);                           
+  wire.SetAnchor(left ? inkEAnchor.CenterRight : inkEAnchor.CenterLeft);
+  wire.SetAnchorPoint(left ? 0.0 : 1.0, 0.5);
+  wire.BindProperty(n"tintColor", n"PerkWire.wireColor");  
+  wire.SetVisible(false);                                  
   return wire;
 }
 
@@ -281,4 +280,36 @@ private func TsunamiSai_Disarm(npc: ref<NPCPuppet>) -> Void {
 private func TsunamiSai_ParryDisarm(npc: ref<NPCPuppet>) -> Void {
   TsunamiSai_Disarm(npc);
   StatusEffectHelper.ApplyStatusEffect(npc, t"BaseStatusEffect.TsunamiSaiParryStun");
+}
+
+private func TsunamiSai_GlowName(c: TsunamiSaiGlow) -> CName {
+  switch c {
+    case TsunamiSaiGlow.Pink: return n"pink";
+    case TsunamiSaiGlow.Blue: return n"blue";
+    case TsunamiSaiGlow.Green: return n"green";
+    case TsunamiSaiGlow.White: return n"white";
+    case TsunamiSaiGlow.Black: return n"black";
+    case TsunamiSaiGlow.Off: return n"off";
+    default: return n"default";
+  }
+}
+
+private func TsunamiSai_ApplyGlowTo(item: ref<ItemObject>, look: CName) -> Void {
+  if !IsDefined(item) {
+    return;
+  }
+  for c in item.GetComponents() {
+    if Equals(c.GetName(), n"tsunamisai_mesh") {
+      c.ChangeAppearance(look, false);
+    }
+  }
+}
+
+private func TsunamiSai_ApplyGlow(player: ref<PlayerPuppet>) -> Void {
+  let look = TsunamiSai_GlowName(TsunamiSaiSettings.Get(player.GetGame()).glowColor);
+  let right = GameInstance.GetTransactionSystem(player.GetGame()).GetItemInSlot(player, t"AttachmentSlots.WeaponRight");
+  if IsDefined(right) && TsunamiSai_IsTsunamiSai(right.GetItemID()) {
+    TsunamiSai_ApplyGlowTo(right, look);
+  }
+  TsunamiSai_ApplyGlowTo(TsunamiSai_GetLeftSaiObject(player), look);
 }

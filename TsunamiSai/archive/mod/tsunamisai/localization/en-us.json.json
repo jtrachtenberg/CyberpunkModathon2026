@@ -34,7 +34,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Publicly known for it's firearms, Tsunami often did custom work for select Solos.  This set was for a client from Okinawa, who was looking for a weapon both flashy and functional.",
+              "femaleVariant": "Publicly known for its firearms, Tsunami often did custom work for select Solos.  This set was for a client from Okinawa, who was looking for a weapon both flashy and functional.",
               "maleVariant": "",
               "primaryKey": "0",
               "secondaryKey": "tsunamisai_weapon_mod_desc"

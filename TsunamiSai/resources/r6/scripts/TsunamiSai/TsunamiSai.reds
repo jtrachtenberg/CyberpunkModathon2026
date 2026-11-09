@@ -31,11 +31,13 @@ protected cb func OnItemAddedToSlot(evt: ref<ItemAddedToSlot>) -> Bool {
       TsunamiSai_AddLeftSai(this);
       TsunamiSai_ShowLeftSaiIfBack(this);
       AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai_dt", TsunamiSai_HasDoubleTrouble(this) ? 1.0 : 0.0);
+      TsunamiSai_ApplyGlow(this);
     }
     if ItemID.GetTDBID(evt.GetItemID()) == t"Items.tsunamisai_weapon_left" {
       AnimationControllerComponent.SetAnimWrapperWeight(this, n"w_tsunamisai", 1.0);
       TsunamiSai_ShowLeftSaiIfBack(this);
       TsunamiSai_RefreshHud(this);
+      TsunamiSai_ApplyGlow(this);
     }
     // handle grenades and other left hand items
     if evt.GetSlotID() == t"AttachmentSlots.WeaponLeft" {
@@ -497,6 +499,27 @@ public func TsunamiSai_AddWire(target: gamedataNewPerkSlotType, wire: ref<inkWid
   connection.m_targetSlot = target;
   ArrayPush(connection.m_wires, ref);
   ArrayPush(this.m_wiresConnections, connection);
+}
+
+@wrapMethod(NewPerksScreenLogicController)
+private func InitializePerksControllers() -> Void {
+  wrappedMethod();
+  if this.m_isEspionage {
+    return;
+  }
+  for controller in this.m_perkControllersArray {
+    let slot = controller.GetSlotIdentifier();
+    if Equals(slot, gamedataNewPerkSlotType.Central_Perk_2_3) {
+      let wire = TsunamiSai_MakeWire(n"tsai_wire_Central_2_3", true);
+      wire.Reparent(controller.GetRootCompoundWidget());
+      controller.TsunamiSai_AddWire(gamedataNewPerkSlotType.Inbetween_Right_2, wire);
+    }
+    if Equals(slot, gamedataNewPerkSlotType.Right_Perk_2_4) {
+      let wire = TsunamiSai_MakeWire(n"tsai_wire_Right_2_4", false);
+      wire.Reparent(controller.GetRootCompoundWidget());
+      controller.TsunamiSai_AddWire(gamedataNewPerkSlotType.Inbetween_Right_2, wire);
+    }
+  }
 }
 
 //Two Right Hands
