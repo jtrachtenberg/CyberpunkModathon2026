@@ -442,6 +442,19 @@ protected const func EnterCondition(const stateContext: ref<StateContext>, const
   return wrappedMethod(stateContext, scriptInterface);
 }
 
+@wrapMethod(MeleeProjectile)
+protected cb func OnProjectileInitialize(eventData: ref<gameprojectileSetUpEvent>) -> Bool {
+  let result = wrappedMethod(eventData);
+  let weapon = eventData.weapon as ItemObject;
+  if IsDefined(weapon) {
+    let rec = ItemID.GetTDBID(weapon.GetItemID());
+    if rec == t"Items.tsunamisai_weapon" || rec == t"Items.tsunamisai_weapon_left" {
+      this.SetMeshAppearance(TsunamiSai_GlowName(TsunamiSaiSettings.Get(this.GetGame()).glowColor), n"mesh");
+    }
+  }
+  return result;
+}
+
 @addMethod(MeleeComboAttackDecisions)
 protected const func TsunamiSai_CanEnterNow(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
   return this.HasAttackRecord(scriptInterface, stateContext.GetIntParameter(n"meleeAttackNumber", true))
@@ -668,4 +681,16 @@ private func SetupInventory(isCurrentPlayerObjectCustomizable: Bool) -> Void {
   if IsDefined(left) {
     this.usedLeftWeaponItemId = left.GetItemID();
   }
+}
+
+@wrapMethod(PhotoModePlayerEntityComponent)
+protected cb func OnItemVisualsAddedToSlot(evt: ref<ItemVisualsAddedToSlot>) -> Bool {
+  let result = wrappedMethod(evt);
+  let rec = ItemID.GetTDBID(evt.GetItemID());
+  if (rec == t"Items.tsunamisai_weapon" || rec == t"Items.tsunamisai_weapon_left") && IsDefined(this.fakePuppet) {
+    let game = this.fakePuppet.GetGame();
+    let item = GameInstance.GetTransactionSystem(game).GetItemInSlot(this.fakePuppet, evt.GetSlotID());
+    TsunamiSai_ApplyGlowTo(item, TsunamiSai_GlowName(TsunamiSaiSettings.Get(game).glowColor));
+  }
+  return result;
 }

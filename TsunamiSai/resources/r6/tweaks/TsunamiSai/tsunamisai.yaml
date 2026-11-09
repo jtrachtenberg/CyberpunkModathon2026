@@ -137,7 +137,7 @@ PhotoModePoses.tsai_pair_ready:
   $base: PhotoModePoses.idle__knife
   animationName: tsai_pair_ready
   acceptedWeaponConfig: POSE_WEAPON_TSAI_PAIR
-  displayName: <your pose name>
+  displayName: "Honte Mochi"
 
 photo_mode.character.femalePoses:
   - !append-once PhotoModePoses.tsai_pair_ready
