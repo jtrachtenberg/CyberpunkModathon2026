@@ -254,6 +254,8 @@ private func TsunamiSai_FinisherOffered(player: ref<PlayerPuppet>, scriptInterfa
 public let m_tsunamiSaiReloadDownAt: Float;
 @addField(PlayerPuppet)
 public let m_tsunamiSaiHeavyBlock: Bool;
+@addField(PlayerPuppet)
+public let m_tsunamiSaiHeavyBlockAt: Float;
 @addField(NPCPuppet)
 public let m_tsunamiSaiDisarms: Int32;
 @addField(PlayerPuppet)
@@ -274,4 +276,9 @@ private func TsunamiSai_Disarm(npc: ref<NPCPuppet>) -> Void {
       }
     }
   }
+}
+
+private func TsunamiSai_ParryDisarm(npc: ref<NPCPuppet>) -> Void {
+  TsunamiSai_Disarm(npc);
+  StatusEffectHelper.ApplyStatusEffect(npc, t"BaseStatusEffect.TsunamiSaiParryStun");
 }

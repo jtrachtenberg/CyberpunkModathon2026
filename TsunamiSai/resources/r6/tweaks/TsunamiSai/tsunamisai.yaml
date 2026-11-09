@@ -129,6 +129,19 @@ Character.Player_Puppet_Base:
     - !append AttachmentSlots.TSaiLeftGrip
     - !append AttachmentSlots.TSaiLeftGripDT
 
+#Photo mode
+photo_mode.poseItems.poseItemsDefinitions:
+  - !append-once "POSE_WEAPON_TSAI_PAIR:AcceptDualWieldItemType=Wea_Knife"
+
+PhotoModePoses.tsai_pair_ready:
+  $base: PhotoModePoses.idle__knife
+  animationName: tsai_pair_ready
+  acceptedWeaponConfig: POSE_WEAPON_TSAI_PAIR
+  displayName: <your pose name>
+
+photo_mode.character.femalePoses:
+  - !append-once PhotoModePoses.tsai_pair_ready
+
 #take advantage of unused perk slot
 NewPerks.Cool_Right_Perk_3_3:
   slot: NewPerks.Inbetween_Right_2
@@ -173,15 +186,12 @@ BaseStatusEffect.TsunamiSaiFlurryRate:
         statType: BaseStats.MaxDuration
         modifierType: Additive
         value: 3.0
-  packages:
-    - $type: GameplayLogicPackage
-      effectors:        
-        - $type: gamedataApplyStatGroupEffector_Record
-          $base: Perks.ApplyStatGroupOnWeapon
-          statGroup:
-            $type: StatModifierGroup
-            statModifiers:
-              - $type: ConstantStatModifier
-                statType: BaseStats.AttackSpeed
-                modifierType: AdditiveMultiplier
-                value: 0.83
+
+BaseStatusEffect.TsunamiSaiParryStun:
+  $base: BaseStatusEffect.Stun
+  duration:
+    statModifiers:
+      - $type: ConstantStatModifier
+        statType: BaseStats.MaxDuration
+        modifierType: Additive
+        value: 2.0

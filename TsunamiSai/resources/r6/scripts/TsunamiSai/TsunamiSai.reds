@@ -71,17 +71,6 @@ private final func OnHitBlockedOrDeflected(hitEvent: ref<gameHitEvent>) -> Void 
   }
 }
 
-//Flurry
-@wrapMethod(PlayerPuppet)
-protected cb func OnDamageInflicted(evt: ref<DamageInflictedEvent>) -> Bool {
-  let result = wrappedMethod(evt);
-  if this.m_tsunamiSaiFlurryRefund > 0.0 && TsunamiSai_InFlurry(this) {
-    PlayerStaminaHelpers.ModifyStamina(this, this.m_tsunamiSaiFlurryRefund);
-    this.m_tsunamiSaiFlurryRefund = 0.0;
-  }
-  return result;
-}
-
 @wrapMethod(PlayerDevelopmentData)
 public func BuyNewPerk(perkType: gamedataNewPerkType, opt forceBuy: Bool) -> Bool {
   let bought = wrappedMethod(perkType, forceBuy);
@@ -208,34 +197,6 @@ public func OnUpdate(timeDelta: Float, stateContext: ref<StateContext>, scriptIn
   }
 }
 
-//Flurry
-@wrapMethod(MeleeAttackGenericEvents)
-public func OnUpdate(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  wrappedMethod(timeDelta, stateContext, scriptInterface);
-  let player = scriptInterface.executionOwner as PlayerPuppet;
-  if !IsDefined(player) {
-    return;
-  }
-  if player.m_tsunamiSaiFlurryEnd > 0.0 && !TsunamiSai_InFlurry(player) {
-    TsunamiSai_EndFlurry(player);
-    return;
-  }
-  // the guard is the same as the left attack's: a press is still "just tapped" on the first tick of the state it started
-  if !TsunamiSai_InFlurry(player) && this.GetInStateTime() > 0.1 && MeleeTransition.QuickMeleeTapped(scriptInterface)
-    && this.TsunamiSai_CanStartFlurry(stateContext, scriptInterface) {
-    player.m_tsunamiSaiFlurryStart = true;
-    stateContext.SetConditionBoolParameter(n"LightMeleeAttackPressed", true, true);
-    return;
-  }
-  if TsunamiSai_InFlurry(player) {
-    // Vanilla only starts on a tap seen that tick (shootTransitions.script:418), so Q pressed during a frenzy is dropped. The melee buffer keeps it
-    // (melee:612), and in game 2026-11-07 extra presses chained flurry after flurry: 30 stabs from a few presses, against 1 s each.
-    stateContext.SetConditionBoolParameter(n"QuickMeleeAttackTapped", false, true);
-    stateContext.SetConditionBoolParameter(n"LightMeleeAttackPressed", true, true);
-    player.m_tsunamiSaiLeftAttackPending = player.m_tsunamiSaiFlurryNextLeft;
-  }
-}
-
 @wrapMethod(MeleeAttackGenericEvents)
 protected func SendAnimationSlotData(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, const attackData: ref<MeleeAttackData>) -> Bool {
   let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
@@ -283,16 +244,17 @@ private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
   let stats = GameInstance.GetStatsSystem(player.GetGame());
   let id = Cast<StatsObjectID>(player.GetEntityID());
 
-  if stats.GetStatValue(id, gamedataStatType.IsBlocking) > 0.0 {
-    wrappedMethod(hitEvent);
-      if player.m_tsunamiSaiHeavyBlock && hitEvent.attackData.WasBlocked() && AttackData.IsMelee(hitEvent.attackData.GetAttackType()) {
-        let npc = hitEvent.attackData.GetInstigator() as NPCPuppet;
-        if IsDefined(npc) {
-          TsunamiSai_Disarm(npc);
-        }
-      }
-      return;
-  }
+   if stats.GetStatValue(id, gamedataStatType.IsBlocking) > 0.0 {
+     wrappedMethod(hitEvent);
+     if player.m_tsunamiSaiHeavyBlock && hitEvent.attackData.WasBlocked() && AttackData.IsMelee(hitEvent.attackData.GetAttackType())
+       && TsunamiSai_Now(player) - player.m_tsunamiSaiHeavyBlockAt <= TweakDBInterface.GetFloat(t"playerStateMachineMelee.meleeDeflect.duration", 0.2) {
+       let npc = hitEvent.attackData.GetInstigator() as NPCPuppet;
+       if IsDefined(npc) {
+         TsunamiSai_ParryDisarm(npc);
+       }
+     }
+     return;
+   }
 
   let cost = RPGManager.CreateStatModifier(gamedataStatType.BlockFactor, gameStatModifierType.Multiplier, 0.8);
   stats.AddModifier(id, cost);
@@ -363,12 +325,13 @@ protected const func ExitCondition(const stateContext: ref<StateContext>, const 
 }
 
 @wrapMethod(MeleeBlockEvents)
-public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {  
   wrappedMethod(stateContext, scriptInterface);
   let player = scriptInterface.executionOwner as PlayerPuppet;
   let weapon: ref<WeaponObject> = MeleeTransition.GetWeaponObject(scriptInterface);
   if IsDefined(player) && IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
     player.m_tsunamiSaiHeavyBlock = true;
+    player.m_tsunamiSaiHeavyBlockAt = TsunamiSai_Now(player);
   }
 }
 
@@ -526,19 +489,6 @@ public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateG
   stateContext.SetPermanentIntParameter(n"meleeAttackNumber", chain, true);
 }
 
-@wrapMethod(MeleeComboAttackEvents)
-public func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
-  let player = scriptInterface.executionOwner as PlayerPuppet;
-  if IsDefined(player) && player.m_tsunamiSaiFlurryStart {
-    player.m_tsunamiSaiFlurryStart = false;
-    TsunamiSai_StartFlurry(player);
-  }
-  wrappedMethod(stateContext, scriptInterface);
-  if IsDefined(player) && TsunamiSai_InFlurry(player) {
-    player.m_tsunamiSaiFlurryNextLeft = !player.m_tsunamiSaiFlurryNextLeft;
-  }
-}
-
 @addMethod(NewPerksPerkContainerLogicController)
 public func TsunamiSai_AddWire(target: gamedataNewPerkSlotType, wire: ref<inkWidget>) -> Void {
   let ref: inkWidgetRef;
@@ -564,39 +514,6 @@ protected func ConsumeStamina(scriptInterface: ref<StateGameScriptInterface>, at
   attackData.staminaCost = cost * 0.75;
   wrappedMethod(scriptInterface, attackData);
   attackData.staminaCost = cost;
-}
-
-//Flurry
-@wrapMethod(MeleeTransition)
-protected func ConsumeStamina(scriptInterface: ref<StateGameScriptInterface>, attackData: ref<MeleeAttackData>) -> Void {
-  let player = scriptInterface.executionOwner as PlayerPuppet;
-  let pools = GameInstance.GetStatPoolsSystem(scriptInterface.GetGame());
-  let before: Float = 0.0;
-  if IsDefined(player) {
-    before = pools.GetStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Stamina, false);
-  }
-  wrappedMethod(scriptInterface, attackData);
-  if IsDefined(player) && TsunamiSai_InFlurry(player) {
-    player.m_tsunamiSaiFlurryRefund = MaxF(0.0, before - pools.GetStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Stamina, false));
-  }
-}
-
-@addMethod(MeleeTransition)
-protected const func TsunamiSai_CanStartFlurry(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  let player = scriptInterface.executionOwner as PlayerPuppet;
-  if !TsunamiSai_CanLeftAttack(player, MeleeTransition.GetWeaponObject(scriptInterface)) || TsunamiSai_InFlurry(player) {
-    return false;
-  }
-  if !this.HasUnlockedValentinosFrenzy(scriptInterface) || DefaultTransition.IsAimingAtFriendly(scriptInterface) {
-    return false;
-  }
-  if scriptInterface.localBlackboard.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Vision) == EnumInt(gamePSMVision.Focus) {
-    return false;
-  }
-  if stateContext.IsStateMachineActive(n"CombatGadget") || stateContext.IsStateMachineActive(n"LocomotionSwimming") {
-    return false;
-  }
-  return GameInstance.GetStatPoolsSystem(player.GetGame()).GetStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Stamina, false) > 0.0;
 }
 
 //To test the quick/long hold timing
@@ -693,10 +610,11 @@ public func PlayFinisherGameEffect(const targetPuppet: ref<GameObject>, instigat
     return wrappedMethod(targetPuppet, instigator, hasFromFront, hasFromBack);
   }
   let effects = GameInstance.GetGameEffectSystem(instigator.GetGame());
-  if !effects.HasEffect(n"tsunamisai_finisher", n"TsunamiSai_Decap") {
+  //debugStrike is conscripted here to avoid conflicts with other mods creating finishers
+  if !effects.HasEffect(n"debugStrike", n"TsunamiSai_Decap") {
     return wrappedMethod(targetPuppet, instigator, hasFromFront, hasFromBack);
   }
-  let fx = effects.CreateEffectStatic(n"tsunamisai_finisher", n"TsunamiSai_Decap", instigator);
+  let fx = effects.CreateEffectStatic(n"debugStrike", n"TsunamiSai_Decap", instigator);
   if !IsDefined(fx) {
     return wrappedMethod(targetPuppet, instigator, hasFromFront, hasFromBack);
   }
@@ -718,4 +636,13 @@ public func PlayFinisherGameEffect(const targetPuppet: ref<GameObject>, instigat
   fx.Run();
   AnimationControllerComponent.PushEventToObjAndHeldItems(instigator, n"ForceReady");
   return true;
+}
+
+@wrapMethod(PhotoModePlayerEntityComponent)
+private func SetupInventory(isCurrentPlayerObjectCustomizable: Bool) -> Void {
+  wrappedMethod(isCurrentPlayerObjectCustomizable);
+  let left = TsunamiSai_GetLeftSaiObject(this.currentPuppet);
+  if IsDefined(left) {
+    this.usedLeftWeaponItemId = left.GetItemID();
+  }
 }
