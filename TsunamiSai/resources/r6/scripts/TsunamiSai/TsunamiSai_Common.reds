@@ -1,5 +1,12 @@
 module TsunamiSai
 
+private func TsunamiSai_HoldsSai(weapon: ref<WeaponObject>) -> Bool {
+  if IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID()) {
+    return true;
+  }
+  return false;
+}
+
 private func TsunamiSai_IsTsunamiSai(id: ItemID) -> Bool {
     return ItemID.GetTDBID(id) == t"Items.tsunamisai_weapon";
 }
@@ -18,19 +25,6 @@ private func TsunamiSai_GetLeftSaiObject(player: ref<PlayerPuppet>) -> ref<ItemO
 
 private func TsunamiSai_HasLeftSai(player: ref<PlayerPuppet>) -> Bool {
     return IsDefined(TsunamiSai_GetLeftSaiObject(player)) && TsunamiSai_IsLeftHandFree(player);
-}
-
-private func TsunamiSai_GetFreeSaiID(player: ref<PlayerPuppet>, rightHandItemId: ItemID) -> ItemID {
-    let transactionSystem: ref<TransactionSystem> = GameInstance.GetTransactionSystem(player.GetGame());
-    let equipment: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
-    let items: array<wref<gameItemData>>;
-    transactionSystem.GetItemList(player, items);
-    for item in items {
-        if TsunamiSai_IsTsunamiSai(item.GetID()) && item.GetID() != rightHandItemId && !equipment.IsEquipped(item.GetID()) {
-            return item.GetID();
-        }
-    }
-    return ItemID.None();
 }
 
 //reuse to allow a vanilla path to reequip the left hand after gadget when a Sai in drawn
@@ -116,7 +110,7 @@ private func TsunamiSai_HasDoubleTrouble(player: ref<PlayerPuppet>) -> Bool {
 }
 
 private func TsunamiSai_CanLeftAttack(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>) -> Bool {
-  return IsDefined(player) && IsDefined(weapon) && TsunamiSai_IsTsunamiSai(weapon.GetItemID())
+  return IsDefined(player) && TsunamiSai_HoldsSai(weapon)
     && TsunamiSai_HasLeftSai(player) && TsunamiSai_HasDoubleTrouble(player);
 }
 
@@ -256,9 +250,7 @@ public let m_tsunamiSaiHeavyBlock: Bool;
 @addField(PlayerPuppet)
 public let m_tsunamiSaiHeavyBlockAt: Float;
 @addField(NPCPuppet)
-public let m_tsunamiSaiDisarms: Int32;
-@addField(PlayerPuppet)
-public let m_tsunamiSaiBlockDownAt: Float;  
+public let m_tsunamiSaiDisarms: Int32; 
  
 private func TsunamiSai_Disarm(npc: ref<NPCPuppet>) -> Void {
   npc.DropWeapons();
