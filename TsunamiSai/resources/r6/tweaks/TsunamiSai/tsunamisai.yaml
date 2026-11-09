@@ -80,6 +80,8 @@ Items.tsunamisai_weapon:
 
 Items.tsunamisai_weapon_left:
   $base: Items.tsunamisai_weapon
+  tags:
+    - !append HideAtVendor  
   stateMachineName: ""
   placementSlots:
     - !append AttachmentSlots.TSaiLeftGrip
@@ -195,3 +197,10 @@ BaseStatusEffect.TsunamiSaiParryStun:
         statType: BaseStats.MaxDuration
         modifierType: Additive
         value: 2.0
+
+#Let it be bought
+Vendors.wbr_jpn_gunsmith_01:
+  itemStock:
+    - !append
+      item: Items.tsunamisai_weapon       # only the right sai: the mod gives the left one on the first draw
+      quantity: [ Vendors.Always_Present ]
